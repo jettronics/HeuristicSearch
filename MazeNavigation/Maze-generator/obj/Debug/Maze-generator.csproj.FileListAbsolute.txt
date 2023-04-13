@@ -1,0 +1,11 @@
+C:\GitHub\HeuristicSearch\MazeNavigation\Maze-generator\bin\Debug\Maze-generator.exe.config
+C:\GitHub\HeuristicSearch\MazeNavigation\Maze-generator\bin\Debug\Maze-generator.exe
+C:\GitHub\HeuristicSearch\MazeNavigation\Maze-generator\bin\Debug\Maze-generator.pdb
+C:\GitHub\HeuristicSearch\MazeNavigation\Maze-generator\obj\Debug\Maze-generator.csproj.AssemblyReference.cache
+C:\GitHub\HeuristicSearch\MazeNavigation\Maze-generator\obj\Debug\Maze-generator.csproj.SuggestedBindingRedirects.cache
+C:\GitHub\HeuristicSearch\MazeNavigation\Maze-generator\obj\Debug\Maze_generator.Properties.Resources.resources
+C:\GitHub\HeuristicSearch\MazeNavigation\Maze-generator\obj\Debug\Maze-generator.csproj.GenerateResource.cache
+C:\GitHub\HeuristicSearch\MazeNavigation\Maze-generator\obj\Debug\Maze-generator.csproj.CoreCompileInputs.cache
+C:\GitHub\HeuristicSearch\MazeNavigation\Maze-generator\obj\Debug\Maze-generator.exe
+C:\GitHub\HeuristicSearch\MazeNavigation\Maze-generator\obj\Debug\Maze-generator.pdb
+C:\GitHub\HeuristicSearch\MazeNavigation\Maze-generator\obj\Debug\Maze_generator.Views.Form.resources
