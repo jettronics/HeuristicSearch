@@ -31,20 +31,19 @@ namespace Maze_generator.Views
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.panel1 = new System.Windows.Forms.Panel();
             this.panel2 = new System.Windows.Forms.Panel();
             this.panel3 = new System.Windows.Forms.Panel();
             this.button4 = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
-            this.numericWidth = new System.Windows.Forms.NumericUpDown();
-            this.numericHeight = new System.Windows.Forms.NumericUpDown();
-            this.label1 = new System.Windows.Forms.Label();
+            this.numericSize = new System.Windows.Forms.NumericUpDown();
             this.button1 = new System.Windows.Forms.Button();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.panel2.SuspendLayout();
             this.panel3.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericWidth)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericHeight)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericSize)).BeginInit();
             this.SuspendLayout();
             // 
             // panel1
@@ -72,9 +71,7 @@ namespace Maze_generator.Views
             this.panel3.Controls.Add(this.button4);
             this.panel3.Controls.Add(this.button3);
             this.panel3.Controls.Add(this.button2);
-            this.panel3.Controls.Add(this.numericWidth);
-            this.panel3.Controls.Add(this.numericHeight);
-            this.panel3.Controls.Add(this.label1);
+            this.panel3.Controls.Add(this.numericSize);
             this.panel3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel3.Location = new System.Drawing.Point(0, 0);
             this.panel3.Name = "panel3";
@@ -114,36 +111,14 @@ namespace Maze_generator.Views
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.astarBtn_Click);
             // 
-            // numericWidth
+            // numericSize
             // 
-            this.numericWidth.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
-            this.numericWidth.AutoSize = true;
-            this.numericWidth.Location = new System.Drawing.Point(86, 9);
-            this.numericWidth.Name = "numericWidth";
-            this.numericWidth.Size = new System.Drawing.Size(50, 20);
-            this.numericWidth.TabIndex = 2;
-            // 
-            // numericHeight
-            // 
-            this.numericHeight.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
-            this.numericHeight.AutoSize = true;
-            this.numericHeight.Location = new System.Drawing.Point(12, 9);
-            this.numericHeight.Name = "numericHeight";
-            this.numericHeight.Size = new System.Drawing.Size(50, 20);
-            this.numericHeight.TabIndex = 0;
-            // 
-            // label1
-            // 
-            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(68, 11);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(12, 13);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "x";
+            this.numericSize.AutoSize = true;
+            this.numericSize.Dock = System.Windows.Forms.DockStyle.Left;
+            this.numericSize.Location = new System.Drawing.Point(0, 0);
+            this.numericSize.Name = "numericSize";
+            this.numericSize.Size = new System.Drawing.Size(41, 20);
+            this.numericSize.TabIndex = 2;
             // 
             // button1
             // 
@@ -156,6 +131,11 @@ namespace Maze_generator.Views
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.generateBtn_Click);
             // 
+            // timer1
+            // 
+            this.timer1.Interval = 1000;
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            // 
             // Form
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -164,14 +144,13 @@ namespace Maze_generator.Views
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.panel2);
             this.Name = "Form";
-            this.Text = "Maze generator";
+            this.Text = "Maze Navigator";
             this.ResizeEnd += new System.EventHandler(this.Form1_ResizeEnd);
             this.SizeChanged += new System.EventHandler(this.Form1_ResizeEnd);
             this.panel2.ResumeLayout(false);
             this.panel3.ResumeLayout(false);
             this.panel3.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericWidth)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericHeight)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericSize)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -181,13 +160,12 @@ namespace Maze_generator.Views
         private Panel panel1;
         private Panel panel2;
         private Panel panel3;
-        private Label label1;
-        private NumericUpDown numericHeight;
         private Button button1;
-        private NumericUpDown numericWidth;
+        private NumericUpDown numericSize;
         private Button button2;
         private Button button3;
         private Button button4;
+        private Timer timer1;
     }
 }
 

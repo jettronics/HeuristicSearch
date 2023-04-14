@@ -8,15 +8,17 @@ namespace Maze_generator.Views
     public sealed partial class Form : System.Windows.Forms.Form
     {
         private Maze _maze;
+        private float xt, yt; 
 
         public Form()
         {
             InitializeComponent();
 
-            const int initialWidth = 15, initialHeight = 15;
-            _maze = new Maze(new Size(initialWidth, initialHeight));
-            numericWidth.Value = initialWidth;
-            numericHeight.Value = initialHeight;
+            const int initialSize = 15;
+            _maze = new Maze(new Size(initialSize, initialSize));
+            numericSize.Value = initialSize;
+
+            xt = 10; yt = 20; 
 
             Refresh();
         }
@@ -61,23 +63,32 @@ namespace Maze_generator.Views
 
         private void generateBtn_Click(object sender, EventArgs e)
         {
-            _maze = new Maze(new Size((int) numericWidth.Value, (int) numericHeight.Value));
+            _maze = new Maze(new Size((int) numericSize.Value, (int)numericSize.Value));
             Refresh();
         }
 
         private void astarBtn_Click(object sender, EventArgs e)
         {
-
+            timer1.Start();
         }
 
         private void bestfirstBtn_Click(object sender, EventArgs e)
         {
-
+            timer1.Start();
         }
 
         private void leastcostBtn_Click(object sender, EventArgs e)
         {
+            timer1.Start();
+        }
 
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            Graphics g = panel1.CreateGraphics();
+            xt += 1;
+            yt += 1;
+            var pen = new Pen(Color.Green, 1);
+            g.DrawLine(pen, xt, yt, xt + 10, yt + 10);
         }
     }
 }
