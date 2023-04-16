@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Maze_generator.Models
 {
-    internal class Route
+    public class Route
     {
         // List instead of Vector
     }
