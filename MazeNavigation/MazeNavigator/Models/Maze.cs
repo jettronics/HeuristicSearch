@@ -10,7 +10,11 @@ namespace Maze_generator.Models
         public Edge[] Edges { get; }
         public Size Size { get; }
         public Door[] Doors { get; }
- 
+        private bool initOpen;
+        private int unvisitedRooms;
+        private int currentRoom;
+        private int maxRooms;
+
         public Maze(Size size)
         {
             var edgesToCheck = Edge.Generate(size);
@@ -18,45 +22,91 @@ namespace Maze_generator.Models
             var mazeEdges = new List<Edge>();
             var mazeDoors = new List<Door>();
 
-#if 0
-            static int currentRoom = 0;
-            static int unvisitedRooms = 1;
+            initOpen = true;
+            maxRooms = size.Height * size.Width;
+
+            do
+            {
+                unvisitedRooms = CreateDoors(); 
+            }
+            while (unvisitedRooms == 1);
+
+            /*
+            var random = new Random();
+            
+            while (sets.Count > 1 && edgesToCheck.Count > 0)
+            {
+                // Pick a random edge
+                var edgeIndex = random.Next(edgesToCheck.Count);
+                var edge = edgesToCheck[edgeIndex];
+
+                // Find the two sets seperated by the edge
+                var set1 = sets.Find(edge.Cell1);
+                var set2 = sets.Find(edge.Cell2);
+
+                if (set1 != set2)
+                {
+                    sets.Union(set1, set2);
+                }
+                else
+                {
+                    mazeEdges.Add(edge);
+                }
+
+                // Remove edge, so it won't be checked again
+                //edgesToCheck.RemoveAt(edgeIndex);
+
+            }
+            
+            // Set maze properties
+            Edges = edgesToCheck.Concat(mazeEdges).ToArray();
+            */
+            Edges = edgesToCheck.ToArray();
+            Doors = mazeDoors.ToArray();
+            Size = size;
+        }
+
+        private int CreateDoors()
+        {
+            int ret = 1;
+
+#if NULL
             static QVector<int> doorsOfRoom;
             static QVector<int> roomsWithNeighbours;
-            static bool initOpen = true;
+#endif
 
-        /*
-            The depth-first search algorithm of maze generation is frequently implemented using backtracking:
+            /*
+                The depth-first search algorithm of maze generation is frequently implemented using backtracking:
 
-            Make the initial cell the current cell and mark it as visited
-            While there are unvisited cells
-                If the current cell has any neighbours which have not been visited
-                    Choose randomly one of the unvisited neighbours
-                    Push the current cell to the stack if it has more than one unvisited neighbor
-                    Remove the wall between the current cell and the chosen cell
-                    Make the chosen cell the current cell and mark it as visited
-                Else if stack is not empty
-                    Pop a cell from the stack while the stack is not empty and the popped cell has no unvisited neighbors
-                    Make it the current cell
-        */
+                Make the initial cell the current cell and mark it as visited
+                While there are unvisited cells
+                    If the current cell has any neighbours which have not been visited
+                        Choose randomly one of the unvisited neighbours
+                        Push the current cell to the stack if it has more than one unvisited neighbor
+                        Remove the wall between the current cell and the chosen cell
+                        Make the chosen cell the current cell and mark it as visited
+                    Else if stack is not empty
+                        Pop a cell from the stack while the stack is not empty and the popped cell has no unvisited neighbors
+                        Make it the current cell
+            */
 
             if (initOpen == true)
             {
-                qDebug() << "Init open doors Maze";
-                currentRoom = 0;
                 unvisitedRooms = 1;
-                QTime t = QTime::currentTime();
-                qsrand((unsigned int)t.msec());
-
-                //Make the initial cell the current cell and mark it as visited
-                currentRoom = (qrand() % maxRooms) + 1;
+                
+                var random = new Random();
+                currentRoom = random.Next(maxRooms);
+#if NULL
                 roomVisitedMaze[currentRoom - 1] = 1;
 
                 roomsWithNeighbours.clear();
+#endif
                 initOpen = false;
+
             }
             else
             {
+#if NULL
                 int chooseRoom = 0;
 
                 //qDebug() << "Current room: " << currentRoom;
@@ -136,50 +186,16 @@ namespace Maze_generator.Models
                     else
                     {
                         qDebug() << "Maze finished";
-                        unvisitedRooms = 0;
+                        ret = 0;
                         initOpen = true;
                     }
                 }
                 qDebug() << "Room list: " << roomsWithNeighbours;
-            }
-
-            return unvisitedRooms;
 #endif
-
-
-            /*
-            var random = new Random();
-            
-            while (sets.Count > 1 && edgesToCheck.Count > 0)
-            {
-                // Pick a random edge
-                var edgeIndex = random.Next(edgesToCheck.Count);
-                var edge = edgesToCheck[edgeIndex];
-
-                // Find the two sets seperated by the edge
-                var set1 = sets.Find(edge.Cell1);
-                var set2 = sets.Find(edge.Cell2);
-
-                if (set1 != set2)
-                {
-                    sets.Union(set1, set2);
-                }
-                else
-                {
-                    mazeEdges.Add(edge);
-                }
-
-                // Remove edge, so it won't be checked again
-                //edgesToCheck.RemoveAt(edgeIndex);
-
             }
-            
-            // Set maze properties
-            Edges = edgesToCheck.Concat(mazeEdges).ToArray();
-            */
-            Edges = edgesToCheck.ToArray();
-            Doors = mazeDoors.ToArray();
-            Size = size;
+
+            return ret;
+
         }
     }
 }
