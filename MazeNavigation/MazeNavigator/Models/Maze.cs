@@ -14,16 +14,33 @@ namespace Maze_generator.Models
         private int unvisitedRooms;
         private int currentRoom;
         private int maxRooms;
+        private int[] roomVisitedMaze;
+        private List<int> roomsWithNeighbours;
+        private List<int> doorsOfRoom;
+        private List<Edge> edgesToCheck;
+        private List<Edge> mazeEdges;
+        private List<Door> mazeDoors;
 
         public Maze(Size size)
         {
-            var edgesToCheck = Edge.Generate(size);
+            edgesToCheck = Edge.Generate(size);
             //var sets = new DisjointSets(size.Height*size.Width);
-            var mazeEdges = new List<Edge>();
-            var mazeDoors = new List<Door>();
+            mazeEdges = new List<Edge>();
+            mazeDoors = new List<Door>();
 
             initOpen = true;
             maxRooms = size.Height * size.Width;
+
+            roomVisitedMaze = new int[maxRooms];
+            doorsOfRoom = new List<int>();
+            roomsWithNeighbours = new List<int>();
+
+            roomsWithNeighbours.Clear();
+
+            for (int i = 0; i < maxRooms; i++)
+            {
+                roomVisitedMaze[i] = 0;
+            }
 
             do
             {
@@ -61,7 +78,8 @@ namespace Maze_generator.Models
             // Set maze properties
             Edges = edgesToCheck.Concat(mazeEdges).ToArray();
             */
-            Edges = edgesToCheck.ToArray();
+            //Edges = edgesToCheck.ToArray();
+            Edges = mazeEdges.ToArray();
             Doors = mazeDoors.ToArray();
             Size = size;
         }
@@ -69,11 +87,6 @@ namespace Maze_generator.Models
         private int CreateDoors()
         {
             int ret = 1;
-
-#if NULL
-            static QVector<int> doorsOfRoom;
-            static QVector<int> roomsWithNeighbours;
-#endif
 
             /*
                 The depth-first search algorithm of maze generation is frequently implemented using backtracking:
@@ -96,51 +109,58 @@ namespace Maze_generator.Models
                 
                 var random = new Random();
                 currentRoom = random.Next(maxRooms);
-#if NULL
-                roomVisitedMaze[currentRoom - 1] = 1;
+                roomVisitedMaze[currentRoom] = 1;
 
-                roomsWithNeighbours.clear();
-#endif
                 initOpen = false;
-
             }
             else
             {
-#if NULL
                 int chooseRoom = 0;
 
-                //qDebug() << "Current room: " << currentRoom;
+                doorsOfRoom.Clear();
 
-                doorsOfRoom.clear();
-
-                for (int i = 0; i < doorPoints.size(); i++)
-                {
-                    //If the current cell has any neighbours which have not been visited
-                    if (doorPoints.at(i)->room1 == currentRoom)
+                for( int i=0; i < edgesToCheck.Count; i++ )
+                { 
+                    if( edgesToCheck.ElementAt(i).Cell1 == currentRoom )
                     {
-                        if (roomVisitedMaze[(doorPoints.at(i)->room2) - 1] == 0)
+                        if( roomVisitedMaze[(edgesToCheck.ElementAt(i).Cell2) - 1] == 0 )
                         {
-                            if (doorsOfRoom.contains(doorPoints.at(i)->room2) == false)
+                            if( doorsOfRoom.Contains(edgesToCheck.ElementAt(i).Cell2) == false )
                             {
-                                doorsOfRoom.push_back(doorPoints.at(i)->room2);
-                                //qDebug() << "Push room neighbour: " << doorPoints.at(i)->room2;
+                                doorsOfRoom.Add(edgesToCheck.ElementAt(i).Cell2);
                             }
                         }
                     }
                     else
-                    if (doorPoints.at(i)->room2 == currentRoom)
+                    if(edgesToCheck.ElementAt(i).Cell2 == currentRoom)
                     {
-                        if (roomVisitedMaze[(doorPoints.at(i)->room1) - 1] == 0)
+                        if( roomVisitedMaze[(edgesToCheck.ElementAt(i).Cell1) - 1] == 0 )
                         {
-                            if (doorsOfRoom.contains(doorPoints.at(i)->room1) == false)
+                            if(doorsOfRoom.Contains(edgesToCheck.ElementAt(i).Cell1) == false)
                             {
-                                doorsOfRoom.push_back(doorPoints.at(i)->room1);
-                                //qDebug() << "Push room neighbour: " << doorPoints.at(i)->room1;
+                                doorsOfRoom.Add(edgesToCheck.ElementAt(i).Cell1);
                             }
                         }
                     }
                 }
 
+                if (doorsOfRoom.Count >= 1)
+                {
+                    //Choose randomly one of the unvisited neighbours
+                    if (doorsOfRoom.Count > 1)
+                    {
+                        var randomCellIndex = new Random();
+                        int doorsOfRoomIndex = randomCellIndex.Next(doorsOfRoom.Count);
+
+                        chooseRoom = doorsOfRoom.ElementAt(doorsOfRoomIndex);
+                        roomsWithNeighbours.Add(currentRoom);
+                    }
+                    else
+                    {
+                        chooseRoom = doorsOfRoom.First();
+                    }
+                }
+#if NULL
                 if (doorsOfRoom.size() >= 1)
                 {
                     //Choose randomly one of the unvisited neighbours
