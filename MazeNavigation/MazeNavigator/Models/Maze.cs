@@ -108,7 +108,7 @@ namespace Maze_generator.Models
             {
                 unvisitedRooms = 1;
                 
-                var random = new Random();
+                var random = new Random(Guid.NewGuid().GetHashCode());
                 currentRoom = random.Next(maxRooms);
                 roomVisitedMaze[currentRoom] = 1;
 
@@ -150,7 +150,7 @@ namespace Maze_generator.Models
                     //Choose randomly one of the unvisited neighbours
                     if (doorsOfRoom.Count > 1)
                     {
-                        var randomCellIndex = new Random();
+                        var randomCellIndex = new Random(Guid.NewGuid().GetHashCode());
                         int doorsOfRoomIndex = randomCellIndex.Next(doorsOfRoom.Count);
 
                         chooseRoom = doorsOfRoom.ElementAt(doorsOfRoomIndex);
