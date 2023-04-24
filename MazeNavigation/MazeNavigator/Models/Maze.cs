@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Windows.Forms.VisualStyles;
 
 namespace Maze_generator.Models
 {
@@ -18,14 +19,14 @@ namespace Maze_generator.Models
         private List<int> roomsWithNeighbours;
         private List<int> doorsOfRoom;
         private List<Edge> edgesToCheck;
-        private List<Edge> mazeEdges;
+        //private List<Edge> mazeEdges;
         private List<Door> mazeDoors;
 
         public Maze(Size size)
         {
             edgesToCheck = Edge.Generate(size);
             //var sets = new DisjointSets(size.Height*size.Width);
-            mazeEdges = new List<Edge>();
+            //mazeEdges = new List<Edge>();
             mazeDoors = new List<Door>();
 
             initOpen = true;
@@ -78,8 +79,8 @@ namespace Maze_generator.Models
             // Set maze properties
             Edges = edgesToCheck.Concat(mazeEdges).ToArray();
             */
-            //Edges = edgesToCheck.ToArray();
-            Edges = mazeEdges.ToArray();
+            Edges = edgesToCheck.ToArray();
+            //Edges = mazeEdges.ToArray();
             Doors = mazeDoors.ToArray();
             Size = size;
         }
@@ -115,7 +116,7 @@ namespace Maze_generator.Models
             }
             else
             {
-                int chooseRoom = 0;
+                int chooseRoom = -1;
 
                 doorsOfRoom.Clear();
 
@@ -123,7 +124,7 @@ namespace Maze_generator.Models
                 { 
                     if( edgesToCheck.ElementAt(i).Cell1 == currentRoom )
                     {
-                        if( roomVisitedMaze[(edgesToCheck.ElementAt(i).Cell2) - 1] == 0 )
+                        if( roomVisitedMaze[edgesToCheck.ElementAt(i).Cell2] == 0 )
                         {
                             if( doorsOfRoom.Contains(edgesToCheck.ElementAt(i).Cell2) == false )
                             {
@@ -134,7 +135,7 @@ namespace Maze_generator.Models
                     else
                     if(edgesToCheck.ElementAt(i).Cell2 == currentRoom)
                     {
-                        if( roomVisitedMaze[(edgesToCheck.ElementAt(i).Cell1) - 1] == 0 )
+                        if( roomVisitedMaze[edgesToCheck.ElementAt(i).Cell1] == 0 )
                         {
                             if(doorsOfRoom.Contains(edgesToCheck.ElementAt(i).Cell1) == false)
                             {
@@ -158,38 +159,23 @@ namespace Maze_generator.Models
                     else
                     {
                         chooseRoom = doorsOfRoom.First();
-                    }
-                }
-#if NULL
-                if (doorsOfRoom.size() >= 1)
-                {
-                    //Choose randomly one of the unvisited neighbours
-                    if (doorsOfRoom.size() > 1)
-                    {
-                        int doorsOfRoomIndex = (qrand() % doorsOfRoom.size());
-                        chooseRoom = doorsOfRoom.at(doorsOfRoomIndex);
-                        //qDebug() << "Push current room: " << currentRoom;
-                        roomsWithNeighbours.push_back(currentRoom);
-                    }
-                    else
-                    {
-                        chooseRoom = doorsOfRoom.takeFirst();
+                        doorsOfRoom.RemoveAt(0);
                     }
 
-                    //qDebug() << "Choose room: " << chooseRoom;
-
-                    if (chooseRoom > 0)
+                    if (chooseRoom >= 0)
                     {
                         //Remove the wall between the current cell and the chosen cell
-                        for (int i = 0; i < doorPoints.size(); i++)
+                        for (int i = 0; i < edgesToCheck.Count; i++)
                         {
-                            if (((doorPoints.at(i)->room1 == currentRoom) && (doorPoints.at(i)->room2 == chooseRoom)) ||
-                                ((doorPoints.at(i)->room2 == currentRoom) && (doorPoints.at(i)->room1 == chooseRoom)))
+                            if (((edgesToCheck.ElementAt(i).Cell1 == currentRoom) && (edgesToCheck.ElementAt(i).Cell2 == chooseRoom)) ||
+                                ((edgesToCheck.ElementAt(i).Cell2 == currentRoom) && (edgesToCheck.ElementAt(i).Cell1 == chooseRoom)))
                             {
-                                doorPoints.at(i)->open = true;
-                                //qDebug() << "Open door: " << i;
+                                //Open door
+                                Door newDoor = new Door(edgesToCheck.ElementAt(i).Cell1, edgesToCheck.ElementAt(i).Cell2);
+                                mazeDoors.Add(newDoor);
                                 currentRoom = chooseRoom;
-                                roomVisitedMaze[currentRoom - 1] = 1;
+                                roomVisitedMaze[currentRoom] = 1;
+                                edgesToCheck.RemoveAt(i);
                                 break;
                             }
                         }
@@ -197,21 +183,21 @@ namespace Maze_generator.Models
                 }
                 else
                 {
-                    if (roomsWithNeighbours.size() > 0)
+                    if (roomsWithNeighbours.Count > 0)
                     {
-                        currentRoom = roomsWithNeighbours.takeLast();
-                        //qDebug() << "Pop current room: " << currentRoom;
-                        roomVisitedMaze[currentRoom - 1] = 1;
+                        currentRoom = roomsWithNeighbours.Last();
+                        int last = roomsWithNeighbours.Count - 1;
+                        roomsWithNeighbours.RemoveAt(last);
+                        //Pop current room
+                        roomVisitedMaze[currentRoom] = 1;
                     }
                     else
                     {
-                        qDebug() << "Maze finished";
+                        //Maze finished
                         ret = 0;
                         initOpen = true;
                     }
                 }
-                qDebug() << "Room list: " << roomsWithNeighbours;
-#endif
             }
 
             return ret;
