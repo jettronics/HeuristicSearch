@@ -35,7 +35,6 @@ namespace Maze_generator.Views
             this.panel1 = new System.Windows.Forms.Panel();
             this.panel2 = new System.Windows.Forms.Panel();
             this.panel3 = new System.Windows.Forms.Panel();
-            this.button4 = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
             this.numericSize = new System.Windows.Forms.NumericUpDown();
@@ -68,7 +67,6 @@ namespace Maze_generator.Views
             // 
             // panel3
             // 
-            this.panel3.Controls.Add(this.button4);
             this.panel3.Controls.Add(this.button3);
             this.panel3.Controls.Add(this.button2);
             this.panel3.Controls.Add(this.numericSize);
@@ -78,17 +76,6 @@ namespace Maze_generator.Views
             this.panel3.Size = new System.Drawing.Size(370, 35);
             this.panel3.TabIndex = 1;
             // 
-            // button4
-            // 
-            this.button4.Dock = System.Windows.Forms.DockStyle.Right;
-            this.button4.Location = new System.Drawing.Point(145, 0);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(75, 35);
-            this.button4.TabIndex = 5;
-            this.button4.Text = "Least Cost";
-            this.button4.UseVisualStyleBackColor = true;
-            this.button4.Click += new System.EventHandler(this.leastcostBtn_Click);
-            // 
             // button3
             // 
             this.button3.Dock = System.Windows.Forms.DockStyle.Right;
@@ -96,9 +83,9 @@ namespace Maze_generator.Views
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(75, 35);
             this.button3.TabIndex = 4;
-            this.button3.Text = "Best First";
+            this.button3.Text = "Greedy";
             this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.bestfirstBtn_Click);
+            this.button3.Click += new System.EventHandler(this.greedyBtn_Click);
             // 
             // button2
             // 
@@ -164,7 +151,6 @@ namespace Maze_generator.Views
         private NumericUpDown numericSize;
         private Button button2;
         private Button button3;
-        private Button button4;
         private Timer timer1;
     }
 }

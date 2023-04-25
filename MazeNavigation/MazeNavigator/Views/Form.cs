@@ -8,6 +8,7 @@ namespace Maze_generator.Views
     public sealed partial class Form : System.Windows.Forms.Form
     {
         private Maze _maze;
+        private Route aStarRoute;
         private float xt, yt; 
 
         public Form()
@@ -69,15 +70,11 @@ namespace Maze_generator.Views
 
         private void astarBtn_Click(object sender, EventArgs e)
         {
+            aStarRoute = new AStarRoute();
             timer1.Start();
         }
 
-        private void bestfirstBtn_Click(object sender, EventArgs e)
-        {
-            timer1.Start();
-        }
-
-        private void leastcostBtn_Click(object sender, EventArgs e)
+        private void greedyBtn_Click(object sender, EventArgs e)
         {
             timer1.Start();
         }
