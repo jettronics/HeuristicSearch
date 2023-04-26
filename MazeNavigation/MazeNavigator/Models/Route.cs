@@ -12,8 +12,8 @@ namespace Maze_generator.Models
     {
         public struct pos_t
         {
-            int room;
-            Point pos;
+            public int room;
+            public PointF pos;
         }
 
         public struct search_route_t
@@ -24,8 +24,8 @@ namespace Maze_generator.Models
             List<search_route_t> childrenRooms;
         }
 
-        protected Point actPos;
-        protected Point tarPos;
+        protected PointF actPos;
+        protected PointF tarPos;
         protected int actRoom;
         protected int tarRoom;
         protected List<Door> doorList;
@@ -33,14 +33,13 @@ namespace Maze_generator.Models
         protected List<search_route_t> search_route_list;
         protected double route_cost;
         protected bool finished;
-        protected int rooms;
+        protected Size rooms;
         protected pos_t tarRoomPos;
+        protected float roomWidthLen;
 
-        public void setActualPos(Point p) { actPos = p; }
-        public void setTargetPos(Point p) { tarPos = p; }
         public void setActualRoom(int room) { actRoom = room; }
         public void setTargetRoom(int room) { tarRoom = room; }
-        public void setRooms(int count) { rooms = count; }
+        public void setRooms(Size count) { rooms = count; }
         public void setDoorList(List<Door> p) { doorList = p; }
         public List<pos_t> getRoute() { return route_list; }
         public double getRouteCost() { return route_cost; }
@@ -51,13 +50,45 @@ namespace Maze_generator.Models
             finished = false;
             actRoom = 0;
             tarRoom = 0;
+            rooms.Width = 0;
+            rooms.Height = 0;
+            roomWidthLen = 0.0f;
             //route_list.Clear();
             //search_route_list.Clear();
         }
 
         public virtual void route()
         {
+            route_cost = 0;
+            if( route_list.Count > 0 )
+            {
+                route_list.Clear();
+            }
+            
+            finished = false;
 
+            int actRoom = 0;
+            int tarRoom = (rooms.Width * rooms.Height) - 1;
+            
+            pos_t startpos;
+            startpos.room = actRoom;
+            roomWidthLen = (1.0f / ((float)rooms.Width));
+            //actPos.X = ((float)(actRoom % rooms.Width)) * ;
+            startpos.pos = actPos;
+            pos_t endpos;
+            endpos.room = tarRoom;
+            endpos.pos = tarPos;
+            /*
+
+            route_list.push_back(startpos);
+
+            search(route_list[0], endpos, 1, 0.0);
+
+            if (route_list.size() <= 1)
+            {
+                route_list.clear();
+            }*/
+            
         }
 
         public virtual void routeStart()
