@@ -40,6 +40,7 @@ namespace Maze_generator.Views
             this.numericSize = new System.Windows.Forms.NumericUpDown();
             this.button1 = new System.Windows.Forms.Button();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.checkedListBox1 = new System.Windows.Forms.CheckedListBox();
             this.panel2.SuspendLayout();
             this.panel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericSize)).BeginInit();
@@ -67,6 +68,7 @@ namespace Maze_generator.Views
             // 
             // panel3
             // 
+            this.panel3.Controls.Add(this.checkedListBox1);
             this.panel3.Controls.Add(this.button3);
             this.panel3.Controls.Add(this.button2);
             this.panel3.Controls.Add(this.numericSize);
@@ -83,9 +85,9 @@ namespace Maze_generator.Views
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(75, 35);
             this.button3.TabIndex = 4;
-            this.button3.Text = "Greedy";
+            this.button3.Text = "Stop";
             this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.greedyBtn_Click);
+            this.button3.Click += new System.EventHandler(this.stopBtn_Click);
             // 
             // button2
             // 
@@ -94,9 +96,9 @@ namespace Maze_generator.Views
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(75, 35);
             this.button2.TabIndex = 3;
-            this.button2.Text = "A*";
+            this.button2.Text = "Start";
             this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.astarBtn_Click);
+            this.button2.Click += new System.EventHandler(this.startBtn_Click);
             // 
             // numericSize
             // 
@@ -122,6 +124,19 @@ namespace Maze_generator.Views
             // 
             this.timer1.Interval = 1000;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            // 
+            // checkedListBox1
+            // 
+            this.checkedListBox1.Dock = System.Windows.Forms.DockStyle.Right;
+            this.checkedListBox1.FormattingEnabled = true;
+            this.checkedListBox1.Items.AddRange(new object[] {
+            "A*",
+            "Greedy"});
+            this.checkedListBox1.Location = new System.Drawing.Point(146, 0);
+            this.checkedListBox1.Name = "checkedListBox1";
+            this.checkedListBox1.Size = new System.Drawing.Size(74, 35);
+            this.checkedListBox1.TabIndex = 5;
+            this.checkedListBox1.SelectedIndexChanged += new System.EventHandler(this.checkedListBox1_SelectedIndexChanged);
             // 
             // Form
             // 
@@ -152,6 +167,7 @@ namespace Maze_generator.Views
         private Button button2;
         private Button button3;
         private Timer timer1;
+        private CheckedListBox checkedListBox1;
     }
 }
 

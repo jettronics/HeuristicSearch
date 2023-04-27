@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using Maze_generator.Models;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Maze_generator.Views
 {
@@ -68,15 +70,34 @@ namespace Maze_generator.Views
             Refresh();
         }
 
-        private void astarBtn_Click(object sender, EventArgs e)
+        private void checkedListBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            aStarRoute = new AStarRoute();
-            timer1.Start();
+
         }
 
-        private void greedyBtn_Click(object sender, EventArgs e)
+        private void startBtn_Click(object sender, EventArgs e)
         {
-            timer1.Start();
+            if (checkedListBox1.SelectedIndex == 0)
+            {
+                if (aStarRoute == null)
+                {
+                    aStarRoute = new AStarRoute();
+                    int tarRoom = (_maze.Size.Width * _maze.Size.Height) - 1;
+                    Size rooms = _maze.Size;
+                    aStarRoute.routeStart(0, tarRoom, rooms, _maze.Doors.ToList<Door>());
+                }
+                timer1.Start();
+            }
+            else
+            if (checkedListBox1.SelectedIndex == 1)
+            {
+                timer1.Start();
+            }
+        }
+
+        private void stopBtn_Click(object sender, EventArgs e)
+        {
+            timer1.Stop();
         }
 
         private void timer1_Tick(object sender, EventArgs e)
