@@ -16,6 +16,13 @@ namespace Maze_generator.Models
             public PointF pos;
         }
 
+        public struct cost_t
+        {
+            private double value;
+            private double sum;
+            private pos_t room;
+        }
+
         public struct search_route_t
         {
             public pos_t actualRoom;
@@ -105,10 +112,7 @@ namespace Maze_generator.Models
             finished = false;
         }
 
-        public virtual void routeProcess()
-        {
-
-        }
+        public abstract void routeProcess();
 
         public abstract void search(pos_t start, pos_t destination, int index, double actual_cost);
     }
@@ -118,13 +122,6 @@ namespace Maze_generator.Models
         public AStarRoute()
         {
 
-        }
-
-        private struct cost_t
-        {
-            double value;
-            double sum;
-            pos_t room;
         }
 
         private double cost(pos_t room1, pos_t room2)
@@ -146,6 +143,38 @@ namespace Maze_generator.Models
 
         }
         
+        public override void routeProcess()
+        {
+
+        }
+    }
+
+    class GreedyRoute : Route
+    {
+        public GreedyRoute()
+        {
+
+        }
+
+        private double cost(pos_t room1, pos_t room2)
+        {
+            return 0.0;
+        }
+        private int applicable(pos_t start, pos_t next, pos_t destination, double cost, double heuristic)
+        {
+            return 0;
+        }
+
+        private int find_children(pos_t start, pos_t destination, int index, cost_t cost_list)
+        {
+            return 0;
+        }
+
+        public override void search(pos_t start, pos_t destination, int index, double actual_cost)
+        {
+
+        }
+
         public override void routeProcess()
         {
 

@@ -11,6 +11,7 @@ namespace Maze_generator.Views
     {
         private Maze _maze;
         private Route aStarRoute;
+        private Route gReedyRoute;
         private float xt, yt; 
 
         public Form()
@@ -84,13 +85,20 @@ namespace Maze_generator.Views
                     aStarRoute = new AStarRoute();
                     int tarRoom = (_maze.Size.Width * _maze.Size.Height) - 1;
                     Size rooms = _maze.Size;
-                    aStarRoute.routeStart(0, tarRoom, rooms, _maze.Doors.ToList<Door>());
+                    aStarRoute.routeStart(0, tarRoom, rooms, _maze.Doors.ToList<Door>());                    
                 }
                 timer1.Start();
             }
-            else
+            
             if (checkedListBox1.SelectedIndex == 1)
             {
+                if (gReedyRoute == null)
+                {
+                    gReedyRoute = new GreedyRoute();
+                    int tarRoom = (_maze.Size.Width * _maze.Size.Height) - 1;
+                    Size rooms = _maze.Size;
+                    gReedyRoute.routeStart(0, tarRoom, rooms, _maze.Doors.ToList<Door>());
+                }
                 timer1.Start();
             }
         }
