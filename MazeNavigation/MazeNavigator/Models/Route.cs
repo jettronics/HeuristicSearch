@@ -57,6 +57,21 @@ namespace Maze_generator.Models
             return ret;
         }
 
+        protected double cost(pos_t room1, pos_t room2)
+        {
+            double ret;
+
+            double x1 = room1.pos.X;
+            double y1 = room1.pos.Y;
+
+            double x2 = room2.pos.X;
+            double y2 = room2.pos.Y;
+
+            ret = Math.Sqrt(((x1 - x2) * (x1 - x2)) + ((y1 - y2) * (y1 - y2)));
+
+            return ret;
+        }
+
         public Route()
         {
             finished = false;
@@ -114,7 +129,6 @@ namespace Maze_generator.Models
 
         public abstract void routeProcess();
 
-        public abstract void search(pos_t start, pos_t destination, int index, double actual_cost);
     }
 
     class AStarRoute : Route
@@ -124,23 +138,32 @@ namespace Maze_generator.Models
 
         }
 
-        private double cost(pos_t room1, pos_t room2)
-        {
-            return 0.0;
-        }
         private int applicable(pos_t start, pos_t next, pos_t destination, double cost, double heuristic)
         {
+            int i;
+            int size = doorList.Count;
+            if (start.room == next.room)
+            {
+                return 0;
+            }
+            for (i = 0; i < size; i++)
+            {
+                if (((doorList.ElementAt(i).Cell1 == start.room) || (doorList.ElementAt(i).Cell2 == start.room))
+                    &&
+                    ((doorList.ElementAt(i).Cell1 == next.room) || (doorList.ElementAt(i).Cell2 == next.room)))
+                {
+                    next.pos = calcRoomPos(next.room);
+                    //cost = cost(start, next);
+                    //*p_heuristic = cost(*p_next, destination);
+                    return 1;
+                }
+            }
             return 0;
         }
 
         private int find_children(pos_t start, pos_t destination, int index, cost_t cost_list)
         {
             return 0;
-        }
-        
-        public override void search(pos_t start, pos_t destination, int index, double actual_cost)
-        {
-
         }
         
         public override void routeProcess()
@@ -156,10 +179,6 @@ namespace Maze_generator.Models
 
         }
 
-        private double cost(pos_t room1, pos_t room2)
-        {
-            return 0.0;
-        }
         private int applicable(pos_t start, pos_t next, pos_t destination, double cost, double heuristic)
         {
             return 0;
@@ -168,11 +187,6 @@ namespace Maze_generator.Models
         private int find_children(pos_t start, pos_t destination, int index, cost_t cost_list)
         {
             return 0;
-        }
-
-        public override void search(pos_t start, pos_t destination, int index, double actual_cost)
-        {
-
         }
 
         public override void routeProcess()
