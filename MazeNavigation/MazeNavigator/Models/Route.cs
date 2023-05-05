@@ -18,12 +18,12 @@ namespace Maze_generator.Models
 
         public struct cost_t
         {
-            private double value;
-            private double sum;
-            private pos_t room;
+            public double value;
+            public double sum;
+            public pos_t room;
         }
 
-        public struct search_route_t
+        public class search_route_t
         {
             public pos_t actualRoom;
             public double actualCost;
@@ -44,6 +44,7 @@ namespace Maze_generator.Models
         protected pos_t tarRoomPos;
         protected float roomWidthLen;
         protected float roomHeightLen;
+        protected List<cost_t> cost_list;
 
         public List<pos_t> getRoute() { return route_list; }
         public double getRouteCost() { return route_cost; }
@@ -57,7 +58,7 @@ namespace Maze_generator.Models
             return ret;
         }
 
-        protected double cost(pos_t room1, pos_t room2)
+        protected double distance(pos_t room1, pos_t room2)
         {
             double ret;
 
@@ -86,6 +87,7 @@ namespace Maze_generator.Models
             search_route_list = new List<search_route_t>();
             //route_list.Clear();
             //search_route_list.Clear();
+            cost_list = new List<cost_t>();
         }
 
         public virtual void routeStart(int actR, int tarR, Size roomC, List<Door> doorL)
@@ -94,6 +96,7 @@ namespace Maze_generator.Models
             
             route_list.Clear();
             search_route_list.Clear();
+            cost_list.Clear();
             
             if (tarR == 0)
             {
@@ -138,7 +141,7 @@ namespace Maze_generator.Models
 
         }
 
-        private int applicable(pos_t start, pos_t next, pos_t destination, double cost, double heuristic)
+        private int applicable(pos_t start, ref pos_t next, pos_t destination, ref double cost, ref double heuristic)
         {
             int i;
             int size = doorList.Count;
@@ -153,22 +156,167 @@ namespace Maze_generator.Models
                     ((doorList.ElementAt(i).Cell1 == next.room) || (doorList.ElementAt(i).Cell2 == next.room)))
                 {
                     next.pos = calcRoomPos(next.room);
-                    //cost = cost(start, next);
-                    //*p_heuristic = cost(*p_next, destination);
+                    cost = distance(start, next);
+                    heuristic = distance(next, destination);
                     return 1;
                 }
             }
             return 0;
         }
 
-        private int find_children(pos_t start, pos_t destination, int index, cost_t cost_list)
+        private int find_children(pos_t start, pos_t destination, int index)
         {
-            return 0;
+            int i;
+            double effort = 0.0;
+            double guess = 0.0;
+            int size = (rooms.Height * rooms.Width);
+            for (i = 0; i < size; i++)
+            {
+                pos_t next;
+                next.room = i + 1;
+                next.pos = new PointF(0, 0);
+                if( applicable(start, ref next, destination, ref effort, ref guess) != 0)
+                {
+                    int found = 0;
+                    for (int j = 0; j < route_list.Count; j++)
+                    {
+                        if (route_list.ElementAt(j).room == next.room)
+                        {
+                            found = 1;
+                            break;
+                        }
+                    }
+                    if (found == 0)
+                    {
+                        cost_t cost;
+                        cost.room.room = next.room;
+                        cost.room.pos = next.pos;
+                        cost.value = effort;
+                        cost.sum = effort + guess;
+                        cost_list.Add(cost);                 
+                    }
+                }
+            }
+            return cost_list.Count;
         }
         
         public override void routeProcess()
         {
+            if (search_route_list.Last().done == true)
+            {
+                search_route_list.RemoveAt(search_route_list.Count-1);
+                search_route_list.Last().childrenRooms.RemoveAt(search_route_list.Last().childrenRooms.Count-1);
+                route_list.RemoveAt(route_list.Count-1);
 
+                if (search_route_list.Last().childrenRooms.Count > 0)
+                {
+                    //qDebug() << "Last knot already done with children(s)";
+                    search_route_t knotRoom = new search_route_t();
+                    knotRoom.actualRoom = search_route_list.Last().childrenRooms.Last().actualRoom;
+                    knotRoom.actualCost = search_route_list.Last().childrenRooms.Last().actualCost;
+                    knotRoom.done = false;
+                    knotRoom.childrenRooms = new List<search_route_t>();
+                    // New active knot
+                    search_route_list.Add(knotRoom);
+                    search_route_list.Last().done = false;
+                    route_list.Add(search_route_list.Last().actualRoom);
+                }
+                else
+                {
+                    //qDebug() << "Last knot already done without children(s)";
+                    // No more children
+                    search_route_list.Last().done = true;
+                }
+            }
+            else
+                if (search_route_list.Last().actualRoom.room != tarRoom)
+            {
+                int n;
+                int found = 0;
+                cost_list.Clear();
+                
+                found = find_children(search_route_list.Last().actualRoom, tarRoomPos, 0);
+                //qDebug() << "Found " << found << "rooms";
+                if (found > 0)
+                {
+                    qsort(cost_list, (size_t)found, sizeof(cost_t), compare);
+                    for (n = found - 1; n >= 0; n--)
+                    {
+                        search_route_t foundroom;
+                        foundroom.actualRoom = cost_list[n].room;
+                        foundroom.actualCost = cost_list[n].value + search_route_list.last().actualCost;
+                        search_route_list.last().childrenRooms.push_back(foundroom);
+                    }
+                    search_route_t knotRoom;
+                    knotRoom.actualRoom = search_route_list.last().childrenRooms.last().actualRoom;
+                    knotRoom.actualCost = search_route_list.last().childrenRooms.last().actualCost;
+                    // New active knot
+                    search_route_list.push_back(knotRoom);
+                    search_route_list.last().done = false;
+                    route_list.push_back(search_route_list.last().actualRoom);
+                    printf("\nChildren, actual cost: %f to room: %d\n", search_route_list.last().actualCost, search_route_list.last().actualRoom.room);
+                }
+                else
+                {
+                    // New active knot has no children
+
+                    // Remove knot
+                    search_route_list.pop_back();
+                    search_route_list.last().childrenRooms.pop_back();
+                    route_list.pop_back();
+
+                    if (search_route_list.last().childrenRooms.size() > 0)
+                    {
+                        qDebug() << "Backtracking with children(s) of room: " << search_route_list.last().actualRoom.room;
+                        search_route_t knotRoom;
+                        knotRoom.actualRoom = search_route_list.last().childrenRooms.last().actualRoom;
+                        knotRoom.actualCost = search_route_list.last().childrenRooms.last().actualCost;
+                        // New active knot
+                        search_route_list.push_back(knotRoom);
+                        search_route_list.last().done = false;
+                        route_list.push_back(search_route_list.last().actualRoom);
+                    }
+                    else
+                    {
+                        qDebug() << "Backtracking without childrens";
+                        // No more children
+                        search_route_list.last().done = true;
+                    }
+                    printf("\nNo Children, actual cost: %f to room: %d\n", search_route_list.last().actualCost, search_route_list.last().actualRoom.room);
+                }
+
+                printf("\nRoute list: ");
+                for (n = 0; n < route_list.size(); n++)
+                {
+                    printf("%d ", route_list[n].room);
+                }
+                printf("\n");
+
+                printf("\nSearch list from parent: %d", search_route_list.last().actualRoom.room);
+                for (n = 0; n < search_route_list.last().childrenRooms.size(); n++)
+                {
+                    printf("%d ", search_route_list.last().childrenRooms[n].actualRoom.room);
+                }
+                printf("\n");
+            }
+            else
+            {
+                int n;
+                route_list.push_back(tarRoomPos);
+                //actualcost_list.push_back(actualcost_list.last()+cost( route_list.at(route_list.size()-2), search_list.last().end ));
+                //route_cost = actualcost_list.last();
+                route_cost = search_route_list.last().actualCost + cost(search_route_list.at(search_route_list.size() - 1).actualRoom, tarRoomPos);
+                finished = true;
+                printf("\nRoute list: ");
+                for (n = 0; n < route_list.size(); n++)
+                {
+                    printf("%d ", route_list[n].room);
+                }
+                printf("\n");
+                printf("\nRoute cost: %f\n", route_cost);
+                search_route_list.clear();
+                //actualcost_list.clear();
+            }
         }
     }
 
