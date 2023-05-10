@@ -115,6 +115,11 @@ namespace Maze_generator.Views
             yt += 1;
             var pen = new Pen(Color.Green, 1);
             g.DrawLine(pen, xt, yt, xt + 10, yt + 10);
+
+            if( aStarRoute.getFinished() == false )
+            {
+                aStarRoute.routeProcess();
+            }
         }
     }
 }
