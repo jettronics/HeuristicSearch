@@ -125,6 +125,7 @@ namespace Maze_generator.Models
             knotRoom.actualRoom = route_list.Last();
             knotRoom.actualCost = 0.0f;
             knotRoom.done = false;
+            knotRoom.childrenRooms = new List<search_route_t>();
             search_route_list.Add(knotRoom);
 
             finished = false;
