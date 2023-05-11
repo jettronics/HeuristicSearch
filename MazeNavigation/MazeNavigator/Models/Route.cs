@@ -262,11 +262,13 @@ namespace Maze_generator.Models
                         search_route_t foundroom = new search_route_t();
                         foundroom.actualRoom = cost_list[n].room;
                         foundroom.actualCost = cost_list[n].value + search_route_list.Last().actualCost;
+                        foundroom.childrenRooms = new List<search_route_t>();
                         search_route_list.Last().childrenRooms.Add(foundroom);
                     }
                     search_route_t knotRoom = new search_route_t();
                     knotRoom.actualRoom = search_route_list.Last().childrenRooms.Last().actualRoom;
                     knotRoom.actualCost = search_route_list.Last().childrenRooms.Last().actualCost;
+                    knotRoom.childrenRooms = new List<search_route_t>();
                     // New active knot
                     search_route_list.Add(knotRoom);
                     search_route_list.Last().done = false;
@@ -288,6 +290,7 @@ namespace Maze_generator.Models
                         search_route_t knotRoom = new search_route_t();
                         knotRoom.actualRoom = search_route_list.Last().childrenRooms.Last().actualRoom;
                         knotRoom.actualCost = search_route_list.Last().childrenRooms.Last().actualCost;
+                        knotRoom.childrenRooms = new List<search_route_t>();
                         // New active knot
                         search_route_list.Add(knotRoom);
                         search_route_list.Last().done = false;

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -111,14 +112,16 @@ namespace Maze_generator.Views
         private void timer1_Tick(object sender, EventArgs e)
         {
             Graphics g = panel1.CreateGraphics();
-            xt += 1;
-            yt += 1;
             var pen = new Pen(Color.Green, 1);
-            g.DrawLine(pen, xt, yt, xt + 10, yt + 10);
+            /*xt += 1;
+            yt += 1;
+            g.DrawLine(pen, xt, yt, xt + 10, yt + 10);*/
 
-            if( aStarRoute.getFinished() == false )
+            if ( aStarRoute.getFinished() == false )
             {
                 aStarRoute.routeProcess();
+                List<Route.pos_t> aStar = aStarRoute.getRoute();
+                g.DrawEllipse(pen, aStar.Last().pos.X, aStar.Last().pos.Y, 10.0F, 10.0F);
             }
         }
     }
