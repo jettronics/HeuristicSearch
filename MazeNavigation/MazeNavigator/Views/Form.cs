@@ -13,7 +13,7 @@ namespace Maze_generator.Views
         private Maze _maze;
         private Route aStarRoute;
         private Route gReedyRoute;
-        private float xt, yt; 
+        private int aStarRouteCount;
 
         public Form()
         {
@@ -22,8 +22,7 @@ namespace Maze_generator.Views
             const int initialSize = 15;
             _maze = new Maze(new Size(initialSize, initialSize));
             numericSize.Value = initialSize;
-
-            xt = 10; yt = 20; 
+            aStarRouteCount = 0;
 
             Refresh();
         }
@@ -60,6 +59,19 @@ namespace Maze_generator.Views
                     g.DrawLine(pen, x, y, x, y + cellHeight);
                 }
             }
+
+            if (aStarRoute != null)
+            {
+                var penRoute = new Pen(Color.Green, 1);
+                List<Route.pos_t> aStar = aStarRoute.getRoute();
+                for (int i = 0; i < aStar.Count; i++)
+                {
+                    float mark_x = (aStar.ElementAt(i).pos.X / 100.0F) * panel1.Width;
+                    float mark_y = (aStar.ElementAt(i).pos.Y / 100.0F) * panel1.Height;
+                    // window pos = (route pos / 100) * window size
+                    g.DrawEllipse(penRoute, mark_x - 5.0F, mark_y - 5.0F, 5.0F, 5.0F);
+                }
+            }
         }
 
         private void Form1_ResizeEnd(object sender, EventArgs e) => Refresh();
@@ -69,6 +81,11 @@ namespace Maze_generator.Views
         private void generateBtn_Click(object sender, EventArgs e)
         {
             _maze = new Maze(new Size((int) numericSize.Value, (int)numericSize.Value));
+            if (aStarRoute != null)
+            {
+                aStarRoute.clearRoute();
+                aStarRouteCount = 0;
+            }
             Refresh();
         }
 
@@ -84,10 +101,12 @@ namespace Maze_generator.Views
                 if (aStarRoute == null)
                 {
                     aStarRoute = new AStarRoute();
-                    int tarRoom = (_maze.Size.Width * _maze.Size.Height) - 1;
-                    Size rooms = _maze.Size;
-                    aStarRoute.routeStart(0, tarRoom, rooms, _maze.Doors.ToList<Door>());                    
                 }
+                int tarRoom = (_maze.Size.Width * _maze.Size.Height) - 1;
+                Size rooms = _maze.Size;
+                aStarRoute.routeStart(0, tarRoom, rooms, _maze.Doors.ToList<Door>());
+                aStarRouteCount = 0;
+
                 timer1.Start();
             }
             
@@ -96,10 +115,11 @@ namespace Maze_generator.Views
                 if (gReedyRoute == null)
                 {
                     gReedyRoute = new GreedyRoute();
-                    int tarRoom = (_maze.Size.Width * _maze.Size.Height) - 1;
-                    Size rooms = _maze.Size;
-                    gReedyRoute.routeStart(0, tarRoom, rooms, _maze.Doors.ToList<Door>());
                 }
+                int tarRoom = (_maze.Size.Width * _maze.Size.Height) - 1;
+                Size rooms = _maze.Size;
+                gReedyRoute.routeStart(0, tarRoom, rooms, _maze.Doors.ToList<Door>());
+
                 timer1.Start();
             }
         }
@@ -113,15 +133,28 @@ namespace Maze_generator.Views
         {
             Graphics g = panel1.CreateGraphics();
             var pen = new Pen(Color.Green, 1);
-            /*xt += 1;
-            yt += 1;
-            g.DrawLine(pen, xt, yt, xt + 10, yt + 10);*/
 
             if ( aStarRoute.getFinished() == false )
             {
                 aStarRoute.routeProcess();
                 List<Route.pos_t> aStar = aStarRoute.getRoute();
-                g.DrawEllipse(pen, aStar.Last().pos.X, aStar.Last().pos.Y, 10.0F, 10.0F);
+                if( aStar.Count < aStarRouteCount )
+                {
+                    Refresh();
+                }
+                else
+                {
+                    float mark_x = (aStar.Last().pos.X / 100.0F) * panel1.Width;
+                    float mark_y = (aStar.Last().pos.Y / 100.0F) * panel1.Height;
+                    // window pos = (route pos / 100) * window size
+                    g.DrawEllipse(pen, mark_x - 5.0F, mark_y - 5.0F, 5.0F, 5.0F);
+                }
+                aStarRouteCount = aStar.Count;
+
+            }
+            else
+            {
+                timer1.Stop();
             }
         }
     }

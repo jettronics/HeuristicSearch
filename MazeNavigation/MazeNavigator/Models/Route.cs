@@ -90,6 +90,17 @@ namespace Maze_generator.Models
             cost_list = new List<cost_t>();
         }
 
+        public void clearRoute()
+        {
+            route_cost = 0;
+
+            route_list.Clear();
+            search_route_list.Clear();
+            cost_list.Clear();
+
+            return;
+        }
+
         public virtual void routeStart(int actR, int tarR, Size roomC, List<Door> doorL)
         {
             route_cost = 0;
@@ -323,7 +334,7 @@ namespace Maze_generator.Models
             }
             else
             {
-                int n;
+                //int n;
                 route_list.Add(tarRoomPos);
                 route_cost = search_route_list.Last().actualCost + distance(search_route_list.ElementAt(search_route_list.Count - 1).actualRoom, tarRoomPos);
                 finished = true;
