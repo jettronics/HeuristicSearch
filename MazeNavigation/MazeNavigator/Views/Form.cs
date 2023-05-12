@@ -13,7 +13,8 @@ namespace Maze_generator.Views
         private Maze _maze;
         private Route aStarRoute;
         private Route gReedyRoute;
-        private int aStarRouteCount;
+        //private int aStarRouteCount;
+        private List<Route.pos_t> aStarCpy;
 
         public Form()
         {
@@ -22,7 +23,8 @@ namespace Maze_generator.Views
             const int initialSize = 15;
             _maze = new Maze(new Size(initialSize, initialSize));
             numericSize.Value = initialSize;
-            aStarRouteCount = 0;
+            //aStarRouteCount = 0;
+            aStarCpy = new List<Route.pos_t>();
 
             Refresh();
         }
@@ -84,7 +86,8 @@ namespace Maze_generator.Views
             if (aStarRoute != null)
             {
                 aStarRoute.clearRoute();
-                aStarRouteCount = 0;
+                //aStarRouteCount = 0;
+                aStarCpy.Clear();
             }
             Refresh();
         }
@@ -105,7 +108,8 @@ namespace Maze_generator.Views
                 int tarRoom = (_maze.Size.Width * _maze.Size.Height) - 1;
                 Size rooms = _maze.Size;
                 aStarRoute.routeStart(0, tarRoom, rooms, _maze.Doors.ToList<Door>());
-                aStarRouteCount = 0;
+                //aStarRouteCount = 0;
+                aStarCpy.Clear();
 
                 timer1.Start();
             }
@@ -138,18 +142,23 @@ namespace Maze_generator.Views
             {
                 aStarRoute.routeProcess();
                 List<Route.pos_t> aStar = aStarRoute.getRoute();
-                if( aStar.Count < aStarRouteCount )
+                if( aStar.Count < aStarCpy.Count )
                 {
-                    Refresh();
+                    //Refresh();
+                    float mark_x = (aStarCpy.Last().pos.X / 100.0F) * panel1.Width;
+                    float mark_y = (aStarCpy.Last().pos.Y / 100.0F) * panel1.Height;
+                    Rectangle rectInvalidate = new Rectangle((int)(mark_x - 10.0F), (int)(mark_y - 10.0F), 20, 20);
+                    panel1.Invalidate(rectInvalidate);
                 }
                 else
                 {
                     float mark_x = (aStar.Last().pos.X / 100.0F) * panel1.Width;
                     float mark_y = (aStar.Last().pos.Y / 100.0F) * panel1.Height;
                     // window pos = (route pos / 100) * window size
-                    g.DrawEllipse(pen, mark_x - 5.0F, mark_y - 5.0F, 5.0F, 5.0F);
+                    g.DrawEllipse(pen, mark_x - 5.0F, mark_y - 5.0F, 5.0F, 5.0F);  
                 }
-                aStarRouteCount = aStar.Count;
+                aStarCpy = aStar.ToList();
+                //aStarRouteCount = aStar.Count;
 
             }
             else
