@@ -142,13 +142,19 @@ namespace Maze_generator.Views
             {
                 aStarRoute.routeProcess();
                 List<Route.pos_t> aStar = aStarRoute.getRoute();
-                if( aStar.Count < aStarCpy.Count )
+                if( aStar.Count <= aStarCpy.Count )
                 {
-                    //Refresh();
                     float mark_x = (aStarCpy.Last().pos.X / 100.0F) * panel1.Width;
                     float mark_y = (aStarCpy.Last().pos.Y / 100.0F) * panel1.Height;
                     Rectangle rectInvalidate = new Rectangle((int)(mark_x - 10.0F), (int)(mark_y - 10.0F), 20, 20);
                     panel1.Invalidate(rectInvalidate);
+                    if (aStar.Count == aStarCpy.Count)
+                    {
+                        mark_x = (aStar.Last().pos.X / 100.0F) * panel1.Width;
+                        mark_y = (aStar.Last().pos.Y / 100.0F) * panel1.Height;
+                        // window pos = (route pos / 100) * window size
+                        g.DrawEllipse(pen, mark_x - 5.0F, mark_y - 5.0F, 5.0F, 5.0F);
+                    }
                 }
                 else
                 {
