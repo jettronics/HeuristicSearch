@@ -133,35 +133,92 @@ namespace Maze_generator.Views
             timer1.Stop();
         }
 
-        private void timer1_Tick(object sender, EventArgs e)
+        private PointF calcRoutePoint( Route.pos_t routePos)
+        {
+            PointF mark = new PointF();
+            mark.X = (routePos.pos.X / 100.0F) * panel1.Width;
+            mark.Y = (routePos.pos.Y / 100.0F) * panel1.Height;
+            return mark;
+        }
+
+        private void addOrRemoveRouteMark( bool add, int router, PointF mark)
         {
             Graphics g = panel1.CreateGraphics();
-            var pen = new Pen(Color.Green, 1);
+            
+
+            if (add == false)
+            {
+                float markInvSize = (panel1.Width / (float)numericSize.Value) * 1.0F;
+                float markInvOffset = markInvSize + (markInvSize * 0.1F);
+                if (router == 1)
+                {
+                    Rectangle rectInvalidate = new Rectangle( (int)(mark.X - markInvOffset), 
+                                                              (int)(mark.Y - markInvOffset), 
+                                                              (int)(markInvSize), 
+                                                              (int)(markInvSize));
+                    panel1.Invalidate(rectInvalidate);
+                }
+                else
+                {
+                    Rectangle rectInvalidate = new Rectangle((int)(mark.X + markInvOffset),
+                                                             (int)(mark.Y + markInvOffset),
+                                                             (int)(markInvSize + 1.5F),
+                                                             (int)(markInvSize + 1.5F));
+                    panel1.Invalidate(rectInvalidate);
+                }
+            }
+            else
+            {
+                PointF markEllSize = new PointF();
+                markEllSize.X = (((float)panel1.Width / (float)numericSize.Value) * 0.25F);
+                markEllSize.Y = (((float)panel1.Height / (float)numericSize.Value) * 0.25F);
+                PointF markEllOffset = new PointF();
+                markEllOffset.X = markEllSize.X + (markEllSize.X * 0.2F);
+                markEllOffset.Y = markEllSize.Y + (markEllSize.Y * 0.2F);
+                if (router == 1)
+                {
+                    var pen = new Pen(Color.Green, 1);                    
+                    g.DrawEllipse(pen, mark.X - markEllOffset.X, mark.Y - markEllOffset.Y, markEllSize.X, markEllSize.Y);
+                }
+                else
+                {
+                    var pen = new Pen(Color.Blue, 1);
+                    g.DrawEllipse(pen, mark.X + markEllOffset.X, mark.Y + markEllOffset.Y, markEllOffset.X, markEllOffset.Y);
+                }
+            }
+            
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            //Graphics g = panel1.CreateGraphics();
+            //var pen = new Pen(Color.Green, 1);
 
             if ( aStarRoute.getFinished() == false )
             {
                 aStarRoute.routeProcess();
                 List<Route.pos_t> aStar = aStarRoute.getRoute();
-                if( aStar.Count <= aStarCpy.Count )
+                PointF mark = new PointF();
+                if ( aStar.Count <= aStarCpy.Count )
                 {
-                    float mark_x = (aStarCpy.Last().pos.X / 100.0F) * panel1.Width;
-                    float mark_y = (aStarCpy.Last().pos.Y / 100.0F) * panel1.Height;
-                    Rectangle rectInvalidate = new Rectangle((int)(mark_x - 10.0F), (int)(mark_y - 10.0F), 20, 20);
-                    panel1.Invalidate(rectInvalidate);
+                    mark = calcRoutePoint(aStarCpy.Last());
+                    //Rectangle rectInvalidate = new Rectangle((int)(mark.X - 10.0F), (int)(mark.Y - 10.0F), 20, 20);
+                    //panel1.Invalidate(rectInvalidate);
+                    addOrRemoveRouteMark(false, 1, mark);
                     if (aStar.Count == aStarCpy.Count)
                     {
-                        mark_x = (aStar.Last().pos.X / 100.0F) * panel1.Width;
-                        mark_y = (aStar.Last().pos.Y / 100.0F) * panel1.Height;
+                        mark = calcRoutePoint(aStar.Last());
                         // window pos = (route pos / 100) * window size
-                        g.DrawEllipse(pen, mark_x - 5.0F, mark_y - 5.0F, 5.0F, 5.0F);
+                        //g.DrawEllipse(pen, mark.X - 5.0F, mark.Y - 5.0F, 5.0F, 5.0F);
+                        addOrRemoveRouteMark(true, 1, mark);
                     }
                 }
                 else
                 {
-                    float mark_x = (aStar.Last().pos.X / 100.0F) * panel1.Width;
-                    float mark_y = (aStar.Last().pos.Y / 100.0F) * panel1.Height;
+                    mark = calcRoutePoint(aStar.Last());
                     // window pos = (route pos / 100) * window size
-                    g.DrawEllipse(pen, mark_x - 5.0F, mark_y - 5.0F, 5.0F, 5.0F);  
+                    //g.DrawEllipse(pen, mark.X - 5.0F, mark.Y - 5.0F, 5.0F, 5.0F);  
+                    addOrRemoveRouteMark(true, 1, mark);
                 }
                 aStarCpy = aStar.ToList();
                 //aStarRouteCount = aStar.Count;
