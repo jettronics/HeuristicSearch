@@ -64,14 +64,19 @@ namespace Maze_generator.Views
 
             if (aStarRoute != null)
             {
-                var penRoute = new Pen(Color.Green, 1);
+                //var penRoute = new Pen(Color.Green, 1);
                 List<Route.pos_t> aStar = aStarRoute.getRoute();
                 for (int i = 0; i < aStar.Count; i++)
                 {
-                    float mark_x = (aStar.ElementAt(i).pos.X / 100.0F) * panel1.Width;
-                    float mark_y = (aStar.ElementAt(i).pos.Y / 100.0F) * panel1.Height;
+                    //float mark_x = (aStar.ElementAt(i).pos.X / 100.0F) * panel1.Width;
+                    //float mark_y = (aStar.ElementAt(i).pos.Y / 100.0F) * panel1.Height;
                     // window pos = (route pos / 100) * window size
-                    g.DrawEllipse(penRoute, mark_x - 5.0F, mark_y - 5.0F, 5.0F, 5.0F);
+                    //g.DrawEllipse(penRoute, mark_x - 5.0F, mark_y - 5.0F, 5.0F, 5.0F);
+                    PointF mark = new PointF();
+                    mark = calcRoutePoint(aStar.ElementAt(i));
+                    // window pos = (route pos / 100) * window size
+                    //g.DrawEllipse(pen, mark.X - 5.0F, mark.Y - 5.0F, 5.0F, 5.0F);  
+                    addOrRemoveRouteMark(true, 1, mark);
                 }
             }
         }
@@ -148,22 +153,30 @@ namespace Maze_generator.Views
 
             if (add == false)
             {
-                float markInvSize = (panel1.Width / (float)numericSize.Value) * 1.0F;
-                float markInvOffset = markInvSize + (markInvSize * 0.1F);
+                //float markInvSize = (panel1.Width / (float)numericSize.Value) * 1.0F;
+                //float markInvOffset = markInvSize + (markInvSize * 0.1F);
+                PointF markInvSize = new PointF();
+                markInvSize.X = (((float)panel1.Width / (float)numericSize.Value) * 0.5F) + 0.5F;
+                markInvSize.Y = (((float)panel1.Height / (float)numericSize.Value) * 0.5F) + 0.5F;
+                PointF markInvOffset = new PointF();
+                //markInvOffset.X = markInvSize.X + (markInvSize.X * 0.2F);
+                //markInvOffset.Y = markInvSize.Y + (markInvSize.Y * 0.2F);
+                markInvOffset.X = markInvSize.X - 0.5F;
+                markInvOffset.Y = markInvSize.Y - 0.5F;
                 if (router == 1)
                 {
-                    Rectangle rectInvalidate = new Rectangle( (int)(mark.X - markInvOffset), 
-                                                              (int)(mark.Y - markInvOffset), 
-                                                              (int)(markInvSize), 
-                                                              (int)(markInvSize));
+                    Rectangle rectInvalidate = new Rectangle( (int)(mark.X - markInvOffset.X), 
+                                                              (int)(mark.Y - markInvOffset.Y), 
+                                                              (int)(markInvSize.X), 
+                                                              (int)(markInvSize.Y));
                     panel1.Invalidate(rectInvalidate);
                 }
                 else
                 {
-                    Rectangle rectInvalidate = new Rectangle((int)(mark.X + markInvOffset),
-                                                             (int)(mark.Y + markInvOffset),
-                                                             (int)(markInvSize + 1.5F),
-                                                             (int)(markInvSize + 1.5F));
+                    Rectangle rectInvalidate = new Rectangle((int)(mark.X + markInvOffset.X),
+                                                             (int)(mark.Y + markInvOffset.Y),
+                                                             (int)(markInvSize.X),
+                                                             (int)(markInvSize.Y));
                     panel1.Invalidate(rectInvalidate);
                 }
             }
@@ -173,8 +186,8 @@ namespace Maze_generator.Views
                 markEllSize.X = (((float)panel1.Width / (float)numericSize.Value) * 0.25F);
                 markEllSize.Y = (((float)panel1.Height / (float)numericSize.Value) * 0.25F);
                 PointF markEllOffset = new PointF();
-                markEllOffset.X = markEllSize.X + (markEllSize.X * 0.2F);
-                markEllOffset.Y = markEllSize.Y + (markEllSize.Y * 0.2F);
+                markEllOffset.X = markEllSize.X + (markEllSize.X * 0.3F);
+                markEllOffset.Y = markEllSize.Y + (markEllSize.Y * 0.3F);
                 if (router == 1)
                 {
                     var pen = new Pen(Color.Green, 1);                    
