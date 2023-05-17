@@ -222,7 +222,13 @@ namespace Maze_generator.Models
             else
             if (a.sum == b.sum)
             {
-                ascend = 0;
+                //ascend = 0;
+                ascend = 1;
+                var random = new Random(Guid.NewGuid().GetHashCode());
+                if( random.Next(2) == 0 )
+                {
+                    ascend = -1;
+                }
             }
             return ascend;
         }

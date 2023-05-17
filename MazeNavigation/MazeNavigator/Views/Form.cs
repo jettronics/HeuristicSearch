@@ -161,8 +161,8 @@ namespace Maze_generator.Views
                 PointF markInvOffset = new PointF();
                 //markInvOffset.X = markInvSize.X + (markInvSize.X * 0.2F);
                 //markInvOffset.Y = markInvSize.Y + (markInvSize.Y * 0.2F);
-                markInvOffset.X = markInvSize.X - 0.5F;
-                markInvOffset.Y = markInvSize.Y - 0.5F;
+                markInvOffset.X = markInvSize.X - 2.0F;
+                markInvOffset.Y = markInvSize.Y - 2.0F;
                 if (router == 1)
                 {
                     Rectangle rectInvalidate = new Rectangle( (int)(mark.X - markInvOffset.X), 
