@@ -73,6 +73,29 @@ namespace Maze_generator.Models
             return ret;
         }
 
+        protected int compareCostBySum(cost_t a, cost_t b)
+        {
+            int ascend = -1;
+            if (a.sum > b.sum)
+            {
+                ascend = 1;
+            }
+            else
+            if (a.sum == b.sum)
+            {
+                //ascend = 0;
+                ascend = 1;
+                var random = new Random(Guid.NewGuid().GetHashCode());
+                if (random.Next(2) == 0)
+                {
+                    ascend = -1;
+                }
+            }
+            return ascend;
+        }
+
+        protected abstract int find_children(pos_t start, pos_t destination, int index);
+
         public Route()
         {
             finished = false;
@@ -142,105 +165,13 @@ namespace Maze_generator.Models
             finished = false;
         }
 
-        public abstract void routeProcess();
-
-    }
-
-    class AStarRoute : Route
-    {
-        public AStarRoute()
-        {
-
-        }
-
-        private int applicable(pos_t start, ref pos_t next, pos_t destination, ref double cost, ref double heuristic)
-        {
-            int i;
-            int size = doorList.Count;
-            if (start.room == next.room)
-            {
-                return 0;
-            }
-            for (i = 0; i < size; i++)
-            {
-                if (((doorList.ElementAt(i).Cell1 == start.room) || (doorList.ElementAt(i).Cell2 == start.room))
-                    &&
-                    ((doorList.ElementAt(i).Cell1 == next.room) || (doorList.ElementAt(i).Cell2 == next.room)))
-                {
-                    next.pos = calcRoomPos(next.room);
-                    cost = distance(start, next);
-                    heuristic = distance(next, destination);
-                    return 1;
-                }
-            }
-            return 0;
-        }
-
-        private int find_children(pos_t start, pos_t destination, int index)
-        {
-            int i;
-            double effort = 0.0;
-            double guess = 0.0;
-            int size = (rooms.Height * rooms.Width);
-            for (i = 0; i < size; i++)
-            {
-                pos_t next;
-                next.room = i + 1;
-                next.pos = new PointF(0, 0);
-                if( applicable(start, ref next, destination, ref effort, ref guess) != 0)
-                {
-                    int found = 0;
-                    for (int j = 0; j < route_list.Count; j++)
-                    {
-                        if (route_list.ElementAt(j).room == next.room)
-                        {
-                            found = 1;
-                            break;
-                        }
-                    }
-                    if (found == 0)
-                    {
-                        cost_t cost;
-                        cost.room.room = next.room;
-                        cost.room.pos = next.pos;
-                        cost.value = effort;
-                        cost.sum = effort + guess;
-                        cost_list.Add(cost);                 
-                    }
-                }
-            }
-            return cost_list.Count;
-        }
-
-        private int compareCostBySum(cost_t a, cost_t b)
-        {
-            int ascend = -1;
-            if (a.sum > b.sum)
-            {
-                ascend = 1;
-            }
-            else
-            if (a.sum == b.sum)
-            {
-                //ascend = 0;
-                ascend = 1;
-                var random = new Random(Guid.NewGuid().GetHashCode());
-                if( random.Next(2) == 0 )
-                {
-                    ascend = -1;
-                }
-            }
-            return ascend;
-        }
-
-
-        public override void routeProcess()
+        public virtual void routeProcess()
         {
             if (search_route_list.Last().done == true)
             {
-                search_route_list.RemoveAt(search_route_list.Count-1);
-                search_route_list.Last().childrenRooms.RemoveAt(search_route_list.Last().childrenRooms.Count-1);
-                route_list.RemoveAt(route_list.Count-1);
+                search_route_list.RemoveAt(search_route_list.Count - 1);
+                search_route_list.Last().childrenRooms.RemoveAt(search_route_list.Last().childrenRooms.Count - 1);
+                route_list.RemoveAt(route_list.Count - 1);
 
                 if (search_route_list.Last().childrenRooms.Count > 0)
                 {
@@ -268,7 +199,7 @@ namespace Maze_generator.Models
                 int n;
                 int found = 0;
                 cost_list.Clear();
-                
+
                 found = find_children(search_route_list.Last().actualRoom, tarRoomPos, 0);
                 //qDebug() << "Found " << found << "rooms";
                 if (found > 0)
@@ -357,6 +288,74 @@ namespace Maze_generator.Models
                 //actualcost_list.clear();
             }
         }
+
+    }
+
+    class AStarRoute : Route
+    {
+        public AStarRoute()
+        {
+
+        }
+
+        private int applicable(pos_t start, ref pos_t next, pos_t destination, ref double cost, ref double heuristic)
+        {
+            int i;
+            int size = doorList.Count;
+            if (start.room == next.room)
+            {
+                return 0;
+            }
+            for (i = 0; i < size; i++)
+            {
+                if (((doorList.ElementAt(i).Cell1 == start.room) || (doorList.ElementAt(i).Cell2 == start.room))
+                    &&
+                    ((doorList.ElementAt(i).Cell1 == next.room) || (doorList.ElementAt(i).Cell2 == next.room)))
+                {
+                    next.pos = calcRoomPos(next.room);
+                    cost = distance(start, next);
+                    heuristic = distance(next, destination);
+                    return 1;
+                }
+            }
+            return 0;
+        }
+
+        protected override int find_children(pos_t start, pos_t destination, int index)
+        {
+            int i;
+            double effort = 0.0;
+            double guess = 0.0;
+            int size = (rooms.Height * rooms.Width);
+            for (i = 0; i < size; i++)
+            {
+                pos_t next;
+                next.room = i + 1;
+                next.pos = new PointF(0, 0);
+                if( applicable(start, ref next, destination, ref effort, ref guess) != 0)
+                {
+                    int found = 0;
+                    for (int j = 0; j < route_list.Count; j++)
+                    {
+                        if (route_list.ElementAt(j).room == next.room)
+                        {
+                            found = 1;
+                            break;
+                        }
+                    }
+                    if (found == 0)
+                    {
+                        cost_t cost;
+                        cost.room.room = next.room;
+                        cost.room.pos = next.pos;
+                        cost.value = effort;
+                        cost.sum = effort + guess;
+                        cost_list.Add(cost);                 
+                    }
+                }
+            }
+            return cost_list.Count;
+        }
     }
 
     class GreedyRoute : Route
@@ -366,19 +365,61 @@ namespace Maze_generator.Models
 
         }
 
-        private int applicable(pos_t start, pos_t next, pos_t destination, double cost, double heuristic)
+        private int applicable(pos_t start, ref pos_t next, pos_t destination, ref double heuristic)
         {
+            int i;
+            int size = doorList.Count;
+            if (start.room == next.room)
+            {
+                return 0;
+            }
+            for (i = 0; i < size; i++)
+            {
+                if (((doorList.ElementAt(i).Cell1 == start.room) || (doorList.ElementAt(i).Cell2 == start.room))
+                    &&
+                    ((doorList.ElementAt(i).Cell1 == next.room) || (doorList.ElementAt(i).Cell2 == next.room)))
+                {
+                    next.pos = calcRoomPos(next.room);
+                    heuristic = distance(next, destination);
+                    return 1;
+                }
+            }
             return 0;
         }
 
-        private int find_children(pos_t start, pos_t destination, int index, cost_t cost_list)
+        protected override int find_children(pos_t start, pos_t destination, int index)
         {
-            return 0;
-        }
-
-        public override void routeProcess()
-        {
-
+            int i;
+            double guess = 0.0;
+            int size = (rooms.Height * rooms.Width);
+            for (i = 0; i < size; i++)
+            {
+                pos_t next;
+                next.room = i + 1;
+                next.pos = new PointF(0, 0);
+                if (applicable(start, ref next, destination, ref guess) != 0)
+                {
+                    int found = 0;
+                    for (int j = 0; j < route_list.Count; j++)
+                    {
+                        if (route_list.ElementAt(j).room == next.room)
+                        {
+                            found = 1;
+                            break;
+                        }
+                    }
+                    if (found == 0)
+                    {
+                        cost_t cost;
+                        cost.room.room = next.room;
+                        cost.room.pos = next.pos;
+                        cost.value = 0.0;
+                        cost.sum = guess;
+                        cost_list.Add(cost);
+                    }
+                }
+            }
+            return cost_list.Count;
         }
     }
 }

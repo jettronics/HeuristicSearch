@@ -15,6 +15,7 @@ namespace Maze_generator.Views
         private Route gReedyRoute;
         //private int aStarRouteCount;
         private List<Route.pos_t> aStarCpy;
+        private List<Route.pos_t> gReedyCpy;
 
         public Form()
         {
@@ -25,6 +26,7 @@ namespace Maze_generator.Views
             numericSize.Value = initialSize;
             //aStarRouteCount = 0;
             aStarCpy = new List<Route.pos_t>();
+            gReedyCpy = new List<Route.pos_t>();
 
             Refresh();
         }
@@ -79,6 +81,22 @@ namespace Maze_generator.Views
                     addOrRemoveRouteMark(true, 1, mark);
                 }
             }
+            if (gReedyRoute != null)
+            {
+                List<Route.pos_t> gReedy = gReedyRoute.getRoute();
+                for (int i = 0; i < gReedy.Count; i++)
+                {
+                    //float mark_x = (aStar.ElementAt(i).pos.X / 100.0F) * panel1.Width;
+                    //float mark_y = (aStar.ElementAt(i).pos.Y / 100.0F) * panel1.Height;
+                    // window pos = (route pos / 100) * window size
+                    //g.DrawEllipse(penRoute, mark_x - 5.0F, mark_y - 5.0F, 5.0F, 5.0F);
+                    PointF mark = new PointF();
+                    mark = calcRoutePoint(gReedy.ElementAt(i));
+                    // window pos = (route pos / 100) * window size
+                    //g.DrawEllipse(pen, mark.X - 5.0F, mark.Y - 5.0F, 5.0F, 5.0F);  
+                    addOrRemoveRouteMark(true, 2, mark);
+                }
+            }
         }
 
         private void Form1_ResizeEnd(object sender, EventArgs e) => Refresh();
@@ -93,6 +111,12 @@ namespace Maze_generator.Views
                 aStarRoute.clearRoute();
                 //aStarRouteCount = 0;
                 aStarCpy.Clear();
+            }
+            if (gReedyRoute != null)
+            {
+                gReedyRoute.clearRoute();
+                //aStarRouteCount = 0;
+                gReedyCpy.Clear();
             }
             Refresh();
         }
@@ -128,6 +152,7 @@ namespace Maze_generator.Views
                 int tarRoom = (_maze.Size.Width * _maze.Size.Height) - 1;
                 Size rooms = _maze.Size;
                 gReedyRoute.routeStart(0, tarRoom, rooms, _maze.Doors.ToList<Door>());
+                gReedyCpy.Clear();
 
                 timer1.Start();
             }
@@ -149,7 +174,6 @@ namespace Maze_generator.Views
         private void addOrRemoveRouteMark( bool add, int router, PointF mark)
         {
             Graphics g = panel1.CreateGraphics();
-            
 
             if (add == false)
             {
@@ -207,39 +231,63 @@ namespace Maze_generator.Views
             //Graphics g = panel1.CreateGraphics();
             //var pen = new Pen(Color.Green, 1);
 
-            if ( aStarRoute.getFinished() == false )
+            if( aStarRoute != null )
             {
-                aStarRoute.routeProcess();
-                List<Route.pos_t> aStar = aStarRoute.getRoute();
-                PointF mark = new PointF();
-                if ( aStar.Count <= aStarCpy.Count )
+                if (aStarRoute.getFinished() == false)
                 {
-                    mark = calcRoutePoint(aStarCpy.Last());
-                    //Rectangle rectInvalidate = new Rectangle((int)(mark.X - 10.0F), (int)(mark.Y - 10.0F), 20, 20);
-                    //panel1.Invalidate(rectInvalidate);
-                    addOrRemoveRouteMark(false, 1, mark);
-                    if (aStar.Count == aStarCpy.Count)
+                    aStarRoute.routeProcess();
+                    List<Route.pos_t> aStar = aStarRoute.getRoute();
+                    PointF mark = new PointF();
+                    if (aStar.Count <= aStarCpy.Count)
+                    {
+                        mark = calcRoutePoint(aStarCpy.Last());
+                        //Rectangle rectInvalidate = new Rectangle((int)(mark.X - 10.0F), (int)(mark.Y - 10.0F), 20, 20);
+                        //panel1.Invalidate(rectInvalidate);
+                        addOrRemoveRouteMark(false, 1, mark);
+                        if (aStar.Count == aStarCpy.Count)
+                        {
+                            mark = calcRoutePoint(aStar.Last());
+                            // window pos = (route pos / 100) * window size
+                            //g.DrawEllipse(pen, mark.X - 5.0F, mark.Y - 5.0F, 5.0F, 5.0F);
+                            addOrRemoveRouteMark(true, 1, mark);
+                        }
+                    }
+                    else
                     {
                         mark = calcRoutePoint(aStar.Last());
                         // window pos = (route pos / 100) * window size
-                        //g.DrawEllipse(pen, mark.X - 5.0F, mark.Y - 5.0F, 5.0F, 5.0F);
+                        //g.DrawEllipse(pen, mark.X - 5.0F, mark.Y - 5.0F, 5.0F, 5.0F);  
                         addOrRemoveRouteMark(true, 1, mark);
                     }
+                    aStarCpy = aStar.ToList();
+                    //aStarRouteCount = aStar.Count;
                 }
-                else
-                {
-                    mark = calcRoutePoint(aStar.Last());
-                    // window pos = (route pos / 100) * window size
-                    //g.DrawEllipse(pen, mark.X - 5.0F, mark.Y - 5.0F, 5.0F, 5.0F);  
-                    addOrRemoveRouteMark(true, 1, mark);
-                }
-                aStarCpy = aStar.ToList();
-                //aStarRouteCount = aStar.Count;
-
             }
-            else
+
+            if (gReedyRoute != null)
             {
-                timer1.Stop();
+                if (gReedyRoute.getFinished() == false)
+                {
+                    gReedyRoute.routeProcess();
+                    List<Route.pos_t> gReedy = gReedyRoute.getRoute();
+                    PointF mark = new PointF();
+                    if (gReedy.Count <= gReedyCpy.Count)
+                    {
+                        mark = calcRoutePoint(gReedyCpy.Last());
+                        addOrRemoveRouteMark(false, 2, mark);
+                        if (gReedy.Count == gReedyCpy.Count)
+                        {
+                            mark = calcRoutePoint(gReedy.Last());
+                            addOrRemoveRouteMark(true, 2, mark);
+                        }
+                    }
+                    else
+                    {
+                        mark = calcRoutePoint(gReedy.Last());
+                        addOrRemoveRouteMark(true, 2, mark);
+                    }
+                    gReedyCpy = gReedy.ToList();
+                }
             }
         }
     }
