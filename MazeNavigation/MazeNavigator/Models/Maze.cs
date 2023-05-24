@@ -21,8 +21,9 @@ namespace Maze_generator.Models
         private List<Edge> edgesToCheck;
         //private List<Edge> mazeEdges;
         private List<Door> mazeDoors;
+        private int additionalDoors;
 
-        public Maze(Size size)
+        public Maze(Size size, int additionalDoors)
         {
             edgesToCheck = Edge.Generate(size);
             //var sets = new DisjointSets(size.Height*size.Width);
@@ -37,6 +38,8 @@ namespace Maze_generator.Models
             roomsWithNeighbours = new List<int>();
 
             roomsWithNeighbours.Clear();
+
+            this.additionalDoors = additionalDoors;
 
             for (int i = 0; i < maxRooms; i++)
             {
@@ -166,12 +169,20 @@ namespace Maze_generator.Models
                         //Maze finished
                         ret = 0;
                         initOpen = true;
+                        for (int i = 0; i < additionalDoors; i++)
+                        {
+                            var randomDoor = new Random(Guid.NewGuid().GetHashCode());
+                            int changeEdgeToDoor = randomDoor.Next(edgesToCheck.Count);
+                            //Open door
+                            Door newDoor = new Door(edgesToCheck.ElementAt(changeEdgeToDoor).Cell1, 
+                                                    edgesToCheck.ElementAt(changeEdgeToDoor).Cell2);
+                            mazeDoors.Add(newDoor);
+                            edgesToCheck.RemoveAt(changeEdgeToDoor);
+                        }
                     }
                 }
             }
-
             return ret;
-
         }
     }
 }

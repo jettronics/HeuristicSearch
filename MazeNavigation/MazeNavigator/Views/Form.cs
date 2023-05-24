@@ -22,7 +22,7 @@ namespace Maze_generator.Views
             InitializeComponent();
 
             const int initialSize = 15;
-            _maze = new Maze(new Size(initialSize, initialSize));
+            _maze = new Maze(new Size(initialSize, initialSize), 0);
             numericSize.Value = initialSize;
             //aStarRouteCount = 0;
             aStarCpy = new List<Route.pos_t>();
@@ -105,7 +105,7 @@ namespace Maze_generator.Views
 
         private void generateBtn_Click(object sender, EventArgs e)
         {
-            _maze = new Maze(new Size((int) numericSize.Value, (int)numericSize.Value));
+            _maze = new Maze(new Size((int) numericSize.Value, (int)numericSize.Value), (int)numericAdditionalDoors.Value);
             if (aStarRoute != null)
             {
                 aStarRoute.clearRoute();
@@ -128,7 +128,7 @@ namespace Maze_generator.Views
 
         private void startBtn_Click(object sender, EventArgs e)
         {
-            if (checkedListBox1.SelectedIndex == 0)
+            if (checkedListBox1.GetItemChecked(0) == true)
             {
                 if (aStarRoute == null)
                 {
@@ -139,11 +139,9 @@ namespace Maze_generator.Views
                 aStarRoute.routeStart(0, tarRoom, rooms, _maze.Doors.ToList<Door>());
                 //aStarRouteCount = 0;
                 aStarCpy.Clear();
-
-                timer1.Start();
             }
-            
-            if (checkedListBox1.SelectedIndex == 1)
+
+            if (checkedListBox1.GetItemChecked(1) == true)
             {
                 if (gReedyRoute == null)
                 {
@@ -153,7 +151,10 @@ namespace Maze_generator.Views
                 Size rooms = _maze.Size;
                 gReedyRoute.routeStart(0, tarRoom, rooms, _maze.Doors.ToList<Door>());
                 gReedyCpy.Clear();
+            }
 
+            if ((checkedListBox1.GetItemChecked(0) == true) || (checkedListBox1.GetItemChecked(1) == true))
+            {
                 timer1.Start();
             }
         }
@@ -185,10 +186,11 @@ namespace Maze_generator.Views
                 PointF markInvOffset = new PointF();
                 //markInvOffset.X = markInvSize.X + (markInvSize.X * 0.2F);
                 //markInvOffset.Y = markInvSize.Y + (markInvSize.Y * 0.2F);
-                markInvOffset.X = markInvSize.X - 2.0F;
-                markInvOffset.Y = markInvSize.Y - 2.0F;
+                
                 if (router == 1)
                 {
+                    markInvOffset.X = markInvSize.X - 2.0F;
+                    markInvOffset.Y = markInvSize.Y - 2.0F;
                     Rectangle rectInvalidate = new Rectangle( (int)(mark.X - markInvOffset.X), 
                                                               (int)(mark.Y - markInvOffset.Y), 
                                                               (int)(markInvSize.X), 
@@ -197,6 +199,8 @@ namespace Maze_generator.Views
                 }
                 else
                 {
+                    markInvOffset.X = 0.0F;
+                    markInvOffset.Y = 0.0F;
                     Rectangle rectInvalidate = new Rectangle((int)(mark.X + markInvOffset.X),
                                                              (int)(mark.Y + markInvOffset.Y),
                                                              (int)(markInvSize.X),
@@ -210,17 +214,19 @@ namespace Maze_generator.Views
                 markEllSize.X = (((float)panel1.Width / (float)numericSize.Value) * 0.25F);
                 markEllSize.Y = (((float)panel1.Height / (float)numericSize.Value) * 0.25F);
                 PointF markEllOffset = new PointF();
-                markEllOffset.X = markEllSize.X + (markEllSize.X * 0.3F);
-                markEllOffset.Y = markEllSize.Y + (markEllSize.Y * 0.3F);
                 if (router == 1)
                 {
+                    markEllOffset.X = markEllSize.X + (markEllSize.X * 0.3F);
+                    markEllOffset.Y = markEllSize.Y + (markEllSize.Y * 0.3F);
                     var pen = new Pen(Color.Green, 1);                    
                     g.DrawEllipse(pen, mark.X - markEllOffset.X, mark.Y - markEllOffset.Y, markEllSize.X, markEllSize.Y);
                 }
                 else
                 {
+                    markEllOffset.X = markEllSize.X - (markEllSize.X * 0.3F);
+                    markEllOffset.Y = markEllSize.Y - (markEllSize.Y * 0.3F);
                     var pen = new Pen(Color.Blue, 1);
-                    g.DrawEllipse(pen, mark.X + markEllOffset.X, mark.Y + markEllOffset.Y, markEllOffset.X, markEllOffset.Y);
+                    g.DrawEllipse(pen, mark.X + markEllOffset.X, mark.Y + markEllOffset.Y, markEllSize.X, markEllSize.Y);
                 }
             }
             
@@ -289,6 +295,21 @@ namespace Maze_generator.Views
                     gReedyCpy = gReedy.ToList();
                 }
             }
+        }
+
+        private void numericSize_ValueChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void numericAdditionalDoors_ValueChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

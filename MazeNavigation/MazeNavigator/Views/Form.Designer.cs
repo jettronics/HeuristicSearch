@@ -41,9 +41,11 @@ namespace Maze_generator.Views
             this.numericSize = new System.Windows.Forms.NumericUpDown();
             this.button1 = new System.Windows.Forms.Button();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.numericAdditionalDoors = new System.Windows.Forms.NumericUpDown();
             this.panel2.SuspendLayout();
             this.panel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericSize)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericAdditionalDoors)).BeginInit();
             this.SuspendLayout();
             // 
             // panel1
@@ -68,6 +70,7 @@ namespace Maze_generator.Views
             // 
             // panel3
             // 
+            this.panel3.Controls.Add(this.numericAdditionalDoors);
             this.panel3.Controls.Add(this.checkedListBox1);
             this.panel3.Controls.Add(this.button3);
             this.panel3.Controls.Add(this.button2);
@@ -121,6 +124,7 @@ namespace Maze_generator.Views
             this.numericSize.Name = "numericSize";
             this.numericSize.Size = new System.Drawing.Size(41, 20);
             this.numericSize.TabIndex = 2;
+            this.numericSize.ValueChanged += new System.EventHandler(this.numericSize_ValueChanged);
             // 
             // button1
             // 
@@ -138,6 +142,16 @@ namespace Maze_generator.Views
             this.timer1.Interval = 200;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
+            // numericAdditionalDoors
+            // 
+            this.numericAdditionalDoors.AutoSize = true;
+            this.numericAdditionalDoors.Dock = System.Windows.Forms.DockStyle.Left;
+            this.numericAdditionalDoors.Location = new System.Drawing.Point(41, 0);
+            this.numericAdditionalDoors.Name = "numericAdditionalDoors";
+            this.numericAdditionalDoors.Size = new System.Drawing.Size(41, 20);
+            this.numericAdditionalDoors.TabIndex = 6;
+            this.numericAdditionalDoors.ValueChanged += new System.EventHandler(this.numericAdditionalDoors_ValueChanged);
+            // 
             // Form
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -153,6 +167,7 @@ namespace Maze_generator.Views
             this.panel3.ResumeLayout(false);
             this.panel3.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericSize)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericAdditionalDoors)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -168,6 +183,7 @@ namespace Maze_generator.Views
         private Button button3;
         private Timer timer1;
         private CheckedListBox checkedListBox1;
+        private NumericUpDown numericAdditionalDoors;
     }
 }
 

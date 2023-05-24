@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -92,6 +93,29 @@ namespace Maze_generator.Models
                 }
             }
             return ascend;
+        }
+
+        protected int applicable(pos_t start, ref pos_t next, pos_t destination, ref double cost, ref double heuristic)
+        {
+            int i;
+            int size = doorList.Count;
+            if (start.room == next.room)
+            {
+                return 0;
+            }
+            for (i = 0; i < size; i++)
+            {
+                if (((doorList.ElementAt(i).Cell1 == start.room) || (doorList.ElementAt(i).Cell2 == start.room))
+                    &&
+                    ((doorList.ElementAt(i).Cell1 == next.room) || (doorList.ElementAt(i).Cell2 == next.room)))
+                {
+                    next.pos = calcRoomPos(next.room);
+                    cost = distance(start, next);
+                    heuristic = distance(next, destination);
+                    return 1;
+                }
+            }
+            return 0;
         }
 
         protected abstract int find_children(pos_t start, pos_t destination, int index);
@@ -205,6 +229,7 @@ namespace Maze_generator.Models
                 if (found > 0)
                 {
                     cost_list.Sort(compareCostBySum);
+                    //for (n = 0; n < found; n++)
                     for (n = found - 1; n >= 0; n--)
                     {
                         search_route_t foundroom = new search_route_t();
@@ -275,6 +300,12 @@ namespace Maze_generator.Models
                 route_list.Add(tarRoomPos);
                 route_cost = search_route_list.Last().actualCost + distance(search_route_list.ElementAt(search_route_list.Count - 1).actualRoom, tarRoomPos);
                 finished = true;
+                Debug.WriteLine("Route cost: " + route_cost.ToString());
+                for (int i = 0; i < route_list.Count; i++)
+                {
+                    Debug.Write(route_list.ElementAt(i).room.ToString() + ' ');
+                }
+                Debug.WriteLine("\n");
                 /*
                 printf("\nRoute list: ");
                 for (n = 0; n < route_list.size(); n++)
@@ -296,29 +327,6 @@ namespace Maze_generator.Models
         public AStarRoute()
         {
 
-        }
-
-        private int applicable(pos_t start, ref pos_t next, pos_t destination, ref double cost, ref double heuristic)
-        {
-            int i;
-            int size = doorList.Count;
-            if (start.room == next.room)
-            {
-                return 0;
-            }
-            for (i = 0; i < size; i++)
-            {
-                if (((doorList.ElementAt(i).Cell1 == start.room) || (doorList.ElementAt(i).Cell2 == start.room))
-                    &&
-                    ((doorList.ElementAt(i).Cell1 == next.room) || (doorList.ElementAt(i).Cell2 == next.room)))
-                {
-                    next.pos = calcRoomPos(next.room);
-                    cost = distance(start, next);
-                    heuristic = distance(next, destination);
-                    return 1;
-                }
-            }
-            return 0;
         }
 
         protected override int find_children(pos_t start, pos_t destination, int index)
@@ -365,31 +373,10 @@ namespace Maze_generator.Models
 
         }
 
-        private int applicable(pos_t start, ref pos_t next, pos_t destination, ref double heuristic)
-        {
-            int i;
-            int size = doorList.Count;
-            if (start.room == next.room)
-            {
-                return 0;
-            }
-            for (i = 0; i < size; i++)
-            {
-                if (((doorList.ElementAt(i).Cell1 == start.room) || (doorList.ElementAt(i).Cell2 == start.room))
-                    &&
-                    ((doorList.ElementAt(i).Cell1 == next.room) || (doorList.ElementAt(i).Cell2 == next.room)))
-                {
-                    next.pos = calcRoomPos(next.room);
-                    heuristic = distance(next, destination);
-                    return 1;
-                }
-            }
-            return 0;
-        }
-
         protected override int find_children(pos_t start, pos_t destination, int index)
         {
             int i;
+            double effort = 0.0;
             double guess = 0.0;
             int size = (rooms.Height * rooms.Width);
             for (i = 0; i < size; i++)
@@ -397,7 +384,7 @@ namespace Maze_generator.Models
                 pos_t next;
                 next.room = i + 1;
                 next.pos = new PointF(0, 0);
-                if (applicable(start, ref next, destination, ref guess) != 0)
+                if (applicable(start, ref next, destination, ref effort, ref guess) != 0)
                 {
                     int found = 0;
                     for (int j = 0; j < route_list.Count; j++)
@@ -413,7 +400,7 @@ namespace Maze_generator.Models
                         cost_t cost;
                         cost.room.room = next.room;
                         cost.room.pos = next.pos;
-                        cost.value = 0.0;
+                        cost.value = effort;
                         cost.sum = guess;
                         cost_list.Add(cost);
                     }
