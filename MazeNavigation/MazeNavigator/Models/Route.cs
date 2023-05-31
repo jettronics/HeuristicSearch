@@ -38,6 +38,7 @@ namespace Maze_generator.Models
         protected int tarRoom;
         protected List<Door> doorList;
         protected List<pos_t> route_list;
+        protected List<List<pos_t>> routes;
         protected List<search_route_t> search_route_list;
         protected double route_cost;
         protected bool finished;
@@ -131,6 +132,7 @@ namespace Maze_generator.Models
             roomHeightLen = 0.0f;
             //doorList = new List<Door>();
             route_list = new List<pos_t>();
+            routes = new List<List<pos_t>>();
             search_route_list = new List<search_route_t>();
             //route_list.Clear();
             //search_route_list.Clear();
@@ -142,6 +144,7 @@ namespace Maze_generator.Models
             route_cost = 0;
 
             route_list.Clear();
+            routes.Clear();
             search_route_list.Clear();
             cost_list.Clear();
 
@@ -153,6 +156,7 @@ namespace Maze_generator.Models
             route_cost = 0;
             
             route_list.Clear();
+            routes.Clear();
             search_route_list.Clear();
             cost_list.Clear();
             
@@ -193,6 +197,8 @@ namespace Maze_generator.Models
         {
             if (search_route_list.Last().done == true)
             {
+                Debug.WriteLine("Route list last done\n");
+
                 search_route_list.RemoveAt(search_route_list.Count - 1);
                 search_route_list.Last().childrenRooms.RemoveAt(search_route_list.Last().childrenRooms.Count - 1);
                 route_list.RemoveAt(route_list.Count - 1);
@@ -215,6 +221,12 @@ namespace Maze_generator.Models
                     //qDebug() << "Last knot already done without children(s)";
                     // No more children
                     search_route_list.Last().done = true;
+                    if (search_route_list.Last().actualRoom.room == 0)
+                    {
+                        // All solutions found
+                        Debug.WriteLine("All Routes found\n");
+                        finished = true;
+                    }
                 }
             }
             else
@@ -298,14 +310,19 @@ namespace Maze_generator.Models
             {
                 //int n;
                 route_list.Add(tarRoomPos);
+                routes.Add(route_list);
                 route_cost = search_route_list.Last().actualCost + distance(search_route_list.ElementAt(search_route_list.Count - 1).actualRoom, tarRoomPos);
-                finished = true;
+                //finished = true;
                 Debug.WriteLine("Route cost: " + route_cost.ToString());
                 for (int i = 0; i < route_list.Count; i++)
                 {
                     Debug.Write(route_list.ElementAt(i).room.ToString() + ' ');
                 }
                 Debug.WriteLine("\n");
+                search_route_list.RemoveAt(search_route_list.Count - 1);
+                search_route_list.Last().childrenRooms.RemoveAt(search_route_list.Last().childrenRooms.Count - 1);
+                route_list.RemoveAt(route_list.Count - 1);
+                search_route_list.Last().done = true;
                 /*
                 printf("\nRoute list: ");
                 for (n = 0; n < route_list.size(); n++)
@@ -315,8 +332,7 @@ namespace Maze_generator.Models
                 printf("\n");
                 printf("\nRoute cost: %f\n", route_cost);
                 */
-                search_route_list.Clear();
-                //actualcost_list.clear();
+                //search_route_list.Clear();
             }
         }
 
