@@ -13,7 +13,8 @@ namespace Maze_generator.Views
         private Maze _maze;
         private Route aStarRoute;
         private Route gReedyRoute;
-        //private int aStarRouteCount;
+        private bool aStarDone;
+        private bool gReedyDone;
         private List<Route.pos_t> aStarCpy;
         private List<Route.pos_t> gReedyCpy;
 
@@ -27,6 +28,9 @@ namespace Maze_generator.Views
             //aStarRouteCount = 0;
             aStarCpy = new List<Route.pos_t>();
             gReedyCpy = new List<Route.pos_t>();
+
+            aStarDone = false;
+            gReedyDone = false;
 
             Refresh();
         }
@@ -105,6 +109,7 @@ namespace Maze_generator.Views
 
         private void generateBtn_Click(object sender, EventArgs e)
         {
+            timer1.Stop();
             _maze = new Maze(new Size((int) numericSize.Value, (int)numericSize.Value), (int)numericAdditionalDoors.Value);
             if (aStarRoute != null)
             {
@@ -118,6 +123,8 @@ namespace Maze_generator.Views
                 //aStarRouteCount = 0;
                 gReedyCpy.Clear();
             }
+            aStarDone = false;
+            gReedyDone = false;
             Refresh();
         }
 
@@ -268,11 +275,15 @@ namespace Maze_generator.Views
                     aStarCpy = aStar.ToList();
                     //aStarRouteCount = aStar.Count;
                 }
+                else
+                {
+                    aStarDone = true;
+                }
             }
 
             if (gReedyRoute != null)
             {
-                if (gReedyRoute.getFinished() == false)
+                if (gReedyRoute.getRoutesFound() == 0 )
                 {
                     gReedyRoute.routeProcess();
                     List<Route.pos_t> gReedy = gReedyRoute.getRoute();
@@ -294,7 +305,18 @@ namespace Maze_generator.Views
                     }
                     gReedyCpy = gReedy.ToList();
                 }
+                else
+                {
+                    gReedyDone = true;
+                }
             }
+
+            if ((gReedyDone == true) && (aStarDone == true))
+            {
+                Refresh();
+                timer1.Stop();
+            }
+
         }
 
         private void numericSize_ValueChanged(object sender, EventArgs e)
