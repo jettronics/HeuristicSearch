@@ -25,6 +25,7 @@ namespace Maze_generator.Views
             const int initialSize = 15;
             _maze = new Maze(new Size(initialSize, initialSize), 0);
             numericSize.Value = initialSize;
+            numericTimerTick.Value = 200;
             //aStarRouteCount = 0;
             aStarCpy = new List<Route.pos_t>();
             gReedyCpy = new List<Route.pos_t>();
@@ -135,6 +136,8 @@ namespace Maze_generator.Views
 
         private void startBtn_Click(object sender, EventArgs e)
         {
+            aStarDone = false;
+            gReedyDone = false;
             if (checkedListBox1.GetItemChecked(0) == true)
             {
                 if (aStarRoute == null)
@@ -147,6 +150,10 @@ namespace Maze_generator.Views
                 //aStarRouteCount = 0;
                 aStarCpy.Clear();
             }
+            else
+            {
+                aStarDone = true;
+            }
 
             if (checkedListBox1.GetItemChecked(1) == true)
             {
@@ -158,6 +165,10 @@ namespace Maze_generator.Views
                 Size rooms = _maze.Size;
                 gReedyRoute.routeStart(0, tarRoom, rooms, _maze.Doors.ToList<Door>());
                 gReedyCpy.Clear();
+            }
+            else
+            {
+                gReedyDone = true;
             }
 
             if ((checkedListBox1.GetItemChecked(0) == true) || (checkedListBox1.GetItemChecked(1) == true))
@@ -332,6 +343,13 @@ namespace Maze_generator.Views
         private void numericAdditionalDoors_ValueChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private void numericTimerTick_ValueChanged(object sender, EventArgs e)
+        {
+            timer1.Stop();
+            timer1.Interval = Convert.ToInt32(numericTimerTick.Value);
+            timer1.Start();
         }
     }
 }

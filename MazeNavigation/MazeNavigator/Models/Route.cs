@@ -324,7 +324,7 @@ namespace Maze_generator.Models
             {
                 //int n;
                 //route_list.Add(tarRoomPos);
-                routes.Add(route_list);
+                routes.Add(new List<pos_t>(route_list));
                 route_cost = search_route_list.Last().actualCost + distance(search_route_list.ElementAt(search_route_list.Count - 1).actualRoom, tarRoomPos);
                 //finished = true;
                 Debug.WriteLine("Route cost: " + route_cost.ToString());

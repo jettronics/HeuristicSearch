@@ -35,6 +35,7 @@ namespace Maze_generator.Views
             this.panel1 = new System.Windows.Forms.Panel();
             this.panel2 = new System.Windows.Forms.Panel();
             this.panel3 = new System.Windows.Forms.Panel();
+            this.numericTimerTick = new System.Windows.Forms.NumericUpDown();
             this.numericAdditionalDoors = new System.Windows.Forms.NumericUpDown();
             this.checkedListBox1 = new System.Windows.Forms.CheckedListBox();
             this.button3 = new System.Windows.Forms.Button();
@@ -44,6 +45,7 @@ namespace Maze_generator.Views
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.panel2.SuspendLayout();
             this.panel3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericTimerTick)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericAdditionalDoors)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericSize)).BeginInit();
             this.SuspendLayout();
@@ -70,6 +72,7 @@ namespace Maze_generator.Views
             // 
             // panel3
             // 
+            this.panel3.Controls.Add(this.numericTimerTick);
             this.panel3.Controls.Add(this.numericAdditionalDoors);
             this.panel3.Controls.Add(this.checkedListBox1);
             this.panel3.Controls.Add(this.button3);
@@ -80,6 +83,21 @@ namespace Maze_generator.Views
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(370, 35);
             this.panel3.TabIndex = 1;
+            // 
+            // numericTimerTick
+            // 
+            this.numericTimerTick.AutoSize = true;
+            this.numericTimerTick.Dock = System.Windows.Forms.DockStyle.Left;
+            this.numericTimerTick.Location = new System.Drawing.Point(82, 0);
+            this.numericTimerTick.Maximum = new decimal(new int[] {
+            500,
+            0,
+            0,
+            0});
+            this.numericTimerTick.Name = "numericTimerTick";
+            this.numericTimerTick.Size = new System.Drawing.Size(41, 20);
+            this.numericTimerTick.TabIndex = 7;
+            this.numericTimerTick.ValueChanged += new System.EventHandler(this.numericTimerTick_ValueChanged);
             // 
             // numericAdditionalDoors
             // 
@@ -166,6 +184,7 @@ namespace Maze_generator.Views
             this.panel2.ResumeLayout(false);
             this.panel3.ResumeLayout(false);
             this.panel3.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericTimerTick)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericAdditionalDoors)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericSize)).EndInit();
             this.ResumeLayout(false);
@@ -184,6 +203,7 @@ namespace Maze_generator.Views
         private Timer timer1;
         private CheckedListBox checkedListBox1;
         private NumericUpDown numericAdditionalDoors;
+        private NumericUpDown numericTimerTick;
     }
 }
 
