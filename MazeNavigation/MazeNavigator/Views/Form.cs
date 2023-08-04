@@ -146,6 +146,7 @@ namespace Maze_generator.Views
                 }
                 int tarRoom = (_maze.Size.Width * _maze.Size.Height) - 1;
                 Size rooms = _maze.Size;
+                aStarRoute.clearRoute();
                 aStarRoute.routeStart(0, tarRoom, rooms, _maze.Doors.ToList<Door>());
                 //aStarRouteCount = 0;
                 aStarCpy.Clear();
@@ -163,6 +164,7 @@ namespace Maze_generator.Views
                 }
                 int tarRoom = (_maze.Size.Width * _maze.Size.Height) - 1;
                 Size rooms = _maze.Size;
+                gReedyRoute.clearRoute();
                 gReedyRoute.routeStart(0, tarRoom, rooms, _maze.Doors.ToList<Door>());
                 gReedyCpy.Clear();
             }
@@ -175,6 +177,7 @@ namespace Maze_generator.Views
             {
                 timer1.Start();
             }
+            Refresh();
         }
 
         private void stopBtn_Click(object sender, EventArgs e)
