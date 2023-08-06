@@ -45,10 +45,11 @@ namespace Maze_generator.Views
             var cellHeight = (float) panel1.Height/_maze.Size.Height;
 
             // Draw begin and end
+            int cellMiddle = ((int)((panel1.Height / cellHeight) / 2.0F)) + 1;
             var brush = new SolidBrush(Color.Red);
-            g.FillRectangle(brush, 0, 0, cellWidth, cellHeight);
+            g.FillRectangle(brush, 0, panel1.Height - (cellMiddle * cellHeight), cellWidth, cellHeight);
             brush.Color = Color.DodgerBlue;
-            g.FillRectangle(brush, panel1.Width - cellWidth, panel1.Height - cellHeight, cellWidth, cellHeight);
+            g.FillRectangle(brush, panel1.Width - cellWidth, panel1.Height - (cellMiddle*cellHeight), cellWidth, cellHeight);
 
             foreach (var edge in _maze.Edges)
             {
@@ -56,8 +57,7 @@ namespace Maze_generator.Views
                 {
                     // Draw a horizontal line
                     var x = (float) Math.Max(edge.Cell1, edge.Cell2)%_maze.Size.Width*cellWidth;
-                    var y = (float) Math.Floor((double) Math.Min(edge.Cell1, edge.Cell2)/_maze.Size.Width + 1)*
-                            cellHeight;
+                    var y = (float) Math.Floor((double) Math.Min(edge.Cell1, edge.Cell2)/_maze.Size.Width + 1)*cellHeight;
                     g.DrawLine(pen, x, y, x + cellWidth, y);
                 }
                 else
@@ -144,17 +144,25 @@ namespace Maze_generator.Views
                 {
                     aStarRoute = new AStarRoute();
                 }
-                int tarRoom = (_maze.Size.Width * _maze.Size.Height) - 1;
+                //int tarRoom = (_maze.Size.Width * _maze.Size.Height) - 1;
+                int tarRoomMiddle = (int)((((float)_maze.Size.Height) / 2.0F) + 0.5F);
+                int tarRoom = (_maze.Size.Width * tarRoomMiddle) - 1;
+                int startRoom = ((_maze.Size.Width) * tarRoomMiddle) - _maze.Size.Width;
                 Size rooms = _maze.Size;
                 aStarRoute.clearRoute();
-                aStarRoute.routeStart(0, tarRoom, rooms, _maze.Doors.ToList<Door>());
-                //aStarRouteCount = 0;
+                aStarRoute.routeStart(startRoom, tarRoom, rooms, _maze.Doors.ToList<Door>());
                 aStarCpy.Clear();
             }
             else
             {
                 aStarDone = true;
+                aStarCpy.Clear();
+                if (aStarRoute != null)
+                {
+                    aStarRoute.clearRoute();
+                }
             }
+            
 
             if (checkedListBox1.GetItemChecked(1) == true)
             {
@@ -162,17 +170,25 @@ namespace Maze_generator.Views
                 {
                     gReedyRoute = new GreedyRoute();
                 }
-                int tarRoom = (_maze.Size.Width * _maze.Size.Height) - 1;
+                //int tarRoom = (_maze.Size.Width * _maze.Size.Height) - 1;
+                int tarRoomMiddle = (int)((((float)_maze.Size.Height) / 2.0F) + 0.5F);
+                int tarRoom = (_maze.Size.Width * tarRoomMiddle) - 1;
+                int startRoom = ((_maze.Size.Width) * tarRoomMiddle) - _maze.Size.Width;
                 Size rooms = _maze.Size;
                 gReedyRoute.clearRoute();
-                gReedyRoute.routeStart(0, tarRoom, rooms, _maze.Doors.ToList<Door>());
+                gReedyRoute.routeStart(startRoom, tarRoom, rooms, _maze.Doors.ToList<Door>());
                 gReedyCpy.Clear();
             }
             else
             {
                 gReedyDone = true;
+                gReedyCpy.Clear();
+                if (gReedyRoute != null)
+                {
+                    gReedyRoute.clearRoute();
+                }
             }
-
+            
             if ((checkedListBox1.GetItemChecked(0) == true) || (checkedListBox1.GetItemChecked(1) == true))
             {
                 timer1.Start();

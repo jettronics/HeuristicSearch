@@ -34,6 +34,7 @@ namespace Maze_generator.Models
 
         protected PointF actPos;
         protected PointF tarPos;
+        protected int startRoom;
         protected int actRoom;
         protected int tarRoom;
         protected List<Door> doorList;
@@ -127,6 +128,7 @@ namespace Maze_generator.Models
             finished = false;
             actRoom = 0;
             tarRoom = 0;
+            startRoom = 0;
             rooms.Width = 0;
             rooms.Height = 0;
             roomWidthLen = 0.0f;
@@ -166,6 +168,7 @@ namespace Maze_generator.Models
                 return;
             }
 
+            startRoom = actR;
             actRoom = actR;
             tarRoom = tarR;
             rooms = roomC;
@@ -199,12 +202,21 @@ namespace Maze_generator.Models
             if (search_route_list.Last().done == true)
             {
                 //Debug.WriteLine("Route list last done\n");
-
-                search_route_list.RemoveAt(search_route_list.Count - 1);
-                search_route_list.Last().childrenRooms.RemoveAt(search_route_list.Last().childrenRooms.Count - 1);
                 route_list.RemoveAt(route_list.Count - 1);
+                search_route_list.RemoveAt(search_route_list.Count - 1);
+                 
+                if (search_route_list.Count > 0)
+                {
+                    search_route_list.Last().childrenRooms.RemoveAt(search_route_list.Last().childrenRooms.Count - 1);
+                }
 
-                if (search_route_list.Last().childrenRooms.Count > 0)
+                int childrensCount = 0;
+                if (search_route_list.Count > 0)
+                {
+                    childrensCount = search_route_list.Last().childrenRooms.Count;
+                }
+
+                if (childrensCount > 0)
                 {
                     //qDebug() << "Last knot already done with children(s)";
                     search_route_t knotRoom = new search_route_t();
@@ -221,27 +233,48 @@ namespace Maze_generator.Models
                 {
                     //qDebug() << "Last knot already done without children(s)";
                     // No more children
-                    search_route_list.Last().done = true;
-                    if (search_route_list.Last().actualRoom.room == 0)
+                    bool toBeFinished = false;
+                    if (search_route_list.Count > 0)
                     {
-                        // All solutions found
-                        Debug.WriteLine("All Routes found\n");
-                        int minRoute = 100000;
-                        int index = 0;
-                        for (int i=0; i<routes.Count; i++)
+                        search_route_list.Last().done = true;
+                        if (search_route_list.Last().actualRoom.room == startRoom)
                         {
-                            int newMin = routes.ElementAt(i).Count;
-                            if ( newMin < minRoute)
-                            {
-                                minRoute = newMin;
-                                index = i;
-                            }
+                            toBeFinished = true;
                         }
-                        route_list.Clear();
-                        route_list = routes.ElementAt(index);
-                        finished = true;
+                    }
+                    else
+                    {
+                        toBeFinished = true;
+                    }
+                    
+                    if (toBeFinished == true)
+                    {
+                        if (routes.Count > 0)
+                        {
+                            // All solutions found
+                            Debug.WriteLine("All Routes found\n");
+                            int minRoute = 100000;
+                            int index = 0;
+                            for (int i = 0; i < routes.Count; i++)
+                            {
+                                int newMin = routes.ElementAt(i).Count;
+                                if (newMin < minRoute)
+                                {
+                                    minRoute = newMin;
+                                    index = i;
+                                }
+                            }
+                            route_list.Clear();
+                            route_list = routes.ElementAt(index);
+                            finished = true;
+                        }
+                        else
+                        {
+                            Debug.WriteLine("No Routes found\n");
+                        }
                     }
                 }
+
             }
             else
             if (search_route_list.Last().actualRoom.room != tarRoom)
@@ -360,7 +393,7 @@ namespace Maze_generator.Models
             for (i = 0; i < size; i++)
             {
                 pos_t next;
-                next.room = i + 1;
+                next.room = i;
                 next.pos = new PointF(0, 0);
                 if( applicable(start, ref next, destination, ref effort, ref guess) != 0)
                 {
